@@ -5,10 +5,17 @@ using UnityEngine;
 public class test : MonoBehaviour
 {
 
+    private string stringOne;
+
     private int one;
     private int one1;
     private int one2;
+
+    private string stringTwo;
+
     private int one3;
+
+    private string stringThree;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +29,11 @@ public class test : MonoBehaviour
         if (one == one1)
         {
             one1 = one2;
+            Debug.Log("HELLO BEN!");
+        }
+
+        if (stringOne == stringTwo) {
+            Debug.Log("GFE%RGIRTEGWEN%GINE%RTGI");
         }
     }
 }
