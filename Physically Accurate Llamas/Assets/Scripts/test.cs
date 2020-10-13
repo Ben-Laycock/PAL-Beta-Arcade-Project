@@ -44,7 +44,10 @@ public class test : MonoBehaviour
                     return;
                 }
             }
+            Debug.Log("HELLO ADRHGERDGERGH BEN!");
         }
+
+        Debug.Log("GERWGQEGERGERG!!!!111");
 
         if (stringOne == stringTwo) {
             Debug.Log("GFE%RGIRTEGWEN%GINE%RTGI");
@@ -52,6 +55,9 @@ public class test : MonoBehaviour
             {
                 return;
             }
+            Debug.Log("GFE%RGIRTEGWEN% ERHGWE%HGE$YW$EA GINE%RTGI");
         }
+
+        Debug.Log("GERWGQEGERGERG!!!!111");
     }
 }
