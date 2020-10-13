@@ -29,11 +29,15 @@ public class test : MonoBehaviour
         if (one == one1)
         {
             one1 = one2;
-            Debug.Log("HELLO BEN!");
+            Debug.Log("HELLO ADRHGERDGERGH BEN!");
         }
 
+        Debug.Log("GERWGQEGERGERG!!!!111");
+
         if (stringOne == stringTwo) {
-            Debug.Log("GFE%RGIRTEGWEN%GINE%RTGI");
+            Debug.Log("GFE%RGIRTEGWEN% ERHGWE%HGE$YW$EA GINE%RTGI");
         }
+
+        Debug.Log("GERWGQEGERGERG!!!!111");
     }
 }
