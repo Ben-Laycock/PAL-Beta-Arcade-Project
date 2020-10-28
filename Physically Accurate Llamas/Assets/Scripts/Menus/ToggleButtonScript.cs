@@ -66,7 +66,7 @@ public class ToggleButtonScript : MonoBehaviour
                 mToggleButtonHandleObject.transform.localPosition = SmoothMove(mOffPosition, mOnPosition, mLerpTimer);
                 if (mLerpTimer > 0.5f)
                 {
-                    mToggleButtonHandleText.text = "On";
+                    mToggleButtonHandleText.text = "ON";
                 }
             }
             else
@@ -75,7 +75,7 @@ public class ToggleButtonScript : MonoBehaviour
                 mToggleButtonHandleObject.transform.localPosition = SmoothMove(mOnPosition, mOffPosition, mLerpTimer);
                 if (mLerpTimer > 0.5f)
                 {
-                    mToggleButtonHandleText.text = "Off";
+                    mToggleButtonHandleText.text = "OFF";
                 }
             }
 
@@ -108,14 +108,14 @@ public class ToggleButtonScript : MonoBehaviour
             mButtonActive = true;
             mToggleButtonHandleImage.color = mEnabledColor;
             mToggleButtonHandleObject.transform.localPosition = new Vector3(mOnPosition, 0f, 0f);
-            mToggleButtonHandleText.text = "On";
+            mToggleButtonHandleText.text = "ON";
         } 
         else if (value == 1)
         {
             mButtonActive = false;
             mToggleButtonHandleImage.color = mDisabledColor;
             mToggleButtonHandleObject.transform.localPosition = new Vector3(mOffPosition, 0f, 0f);
-            mToggleButtonHandleText.text = "Off";
+            mToggleButtonHandleText.text = "OFF";
         }
 
     }
