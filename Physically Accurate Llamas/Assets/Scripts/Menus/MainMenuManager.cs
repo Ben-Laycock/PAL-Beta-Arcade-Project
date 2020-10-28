@@ -11,17 +11,17 @@ public class MainMenuManager : MonoBehaviour
 
     [SerializeField] private float mMenuSlideSpeedModifier = 1.0f;
 
-    [SerializeField] private GameObject mMainMenuObject;
-    [SerializeField] private GameObject mOptionsMenuObject;
+    [SerializeField] private GameObject mMainMenuObject = null;
+    [SerializeField] private GameObject mOptionsMenuObject = null;
 
     private float mMenuMoveTimer = 0.0f;
     private bool mSwitchToOptionsMenu = false;
 
-    private Vector3 mMainMenuOriginalPosition;
-    private Vector3 mOptionsMenuOriginalPosition;
+    private Vector3 mMainMenuOriginalPosition = Vector3.zero;
+    private Vector3 mOptionsMenuOriginalPosition = Vector3.zero;
 
-    private RectTransform mMainMenuObjectRectTransform;
-    private RectTransform mOptionsMenuObjectRectTransform;
+    private RectTransform mMainMenuObjectRectTransform = null;
+    private RectTransform mOptionsMenuObjectRectTransform = null;
 
 
     private void Start()
