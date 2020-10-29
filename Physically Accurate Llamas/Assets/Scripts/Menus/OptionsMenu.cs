@@ -180,9 +180,9 @@ public class OptionsMenu : MonoBehaviour
         int vSyncBoolFromButton = mVSyncToggleButtonScript.GetButtonState() ? 0 : 1;
 
         //Checks if anything has been changed
-        if (mWindowStyleDropDown.value == PlayerPrefs.GetInt("OldSelectedWindowValue", -1) &&
-            mResolutionDropDown.value == PlayerPrefs.GetInt("OldSelectedResolutionValue", -1) &&
-            vSyncBoolFromButton == PlayerPrefs.GetInt("OldVSyncEnabled", -1))
+        if (mWindowStyleDropDown.value == PlayerPrefs.GetInt("SelectedWindowValue", -1) &&
+            mResolutionDropDown.value == PlayerPrefs.GetInt("SelectedResolutionValue", -1) &&
+            vSyncBoolFromButton == PlayerPrefs.GetInt("VSyncEnabled", -1))
         {
             return;
         }
