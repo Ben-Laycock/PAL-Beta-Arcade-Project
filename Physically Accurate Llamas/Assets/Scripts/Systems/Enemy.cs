@@ -6,7 +6,11 @@ using UnityEngine.AI;
 public class Enemy: MonoBehaviour
 {
     [SerializeField] public float mLookArea = 10f;
-
+    [SerializeField] public Transform[] mPatrolPoints;
+    [SerializeField] public GameObject mThePlayer;
+    
+    private int mDesPoint = 0;
+   
     Transform mPlayer;
     NavMeshAgent mAgent;
 
@@ -15,7 +19,9 @@ public class Enemy: MonoBehaviour
     {
         mPlayer = PlayerTarget.instance.mPlayer.transform;
         mAgent = GetComponent<NavMeshAgent>();
-        
+        mAgent.autoBraking = false;
+
+        GoToNextPoint();
     }
 
 
@@ -35,7 +41,15 @@ public class Enemy: MonoBehaviour
             } 
 
         }
-    
+
+        if (!mAgent.pathPending && mAgent.remainingDistance < 0.5f)
+            GoToNextPoint();
+        else
+        {
+            
+
+        }
+
     }
 
     void FacePlayer ()
@@ -45,6 +59,18 @@ public class Enemy: MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRoatation, Time.deltaTime * 5f);
 
     }
+
+
+    void GoToNextPoint()
+    {
+
+        if (mPatrolPoints.Length == 0)
+            return;
+
+        mAgent.destination = mPatrolPoints[mDesPoint].position;
+        mDesPoint = (mDesPoint + 1) % mPatrolPoints.Length;
+
+     }
 
     private void OnDrawGizmosSelected()
     {
