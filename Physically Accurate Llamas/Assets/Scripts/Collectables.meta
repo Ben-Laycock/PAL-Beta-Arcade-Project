@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Physically Accurate Llamas/Assets/Scripts/Collectables.meta
 guid: 60eb69f05c1dacf41a64a35663fde837
+=======
+guid: 9fff962032637724b98f06880cf2e742
+>>>>>>> Stashed changes:Physically Accurate Llamas/Assets/Prefabs.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
