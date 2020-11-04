@@ -8,16 +8,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject mPlayerCameraAnchorPoint = null;
     private Rigidbody mRigidbody = null;
 
-    [SerializeField] private float mGravityScale = 1f;
-
     [SerializeField] private LayerMask mGroundLayerMaskCheck = new LayerMask();
-    private bool mGrounded = false;
-
     [SerializeField] private float mMaxSlopeAngle = 30f;
-    [SerializeField] private float mMaxSlideAngle = 89f;
-
-    [Tooltip("Used to toggle player character control while not grounded.")]
-    [SerializeField] private bool mCanControlInAir = true;
+    [SerializeField] private float mMaxSlideAngle = 80f;
 
     [SerializeField] private float mMovementSpeed = 5f;
 
@@ -32,15 +25,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool mSliding = false;
     private Vector3 mGroundNormal = Vector3.zero;
 
-    private bool mShouldJump = false;
-    [SerializeField] private float mJumpForce = 10f;
-
-    private Vector3 mTargetMovementVector = Vector3.zero;
-
 
     [Space][Space][Space]
-
-
     /*
      * Camera Variables
      */
@@ -49,8 +35,8 @@ public class PlayerController : MonoBehaviour
     private bool mShouldAutoAdjustCamera = false;
     [SerializeField] private float mTimeUntilAutomaticCameraAdjustment = 2f;
     private float mAutoAdjustmentTimer = 0f;
-
     [SerializeField] private float mCameraRotationSensitivity = 50f;
+    [SerializeField] private float mControllerLookStickDeadzone = 0.25f;
 
 
     void Start()
@@ -58,9 +44,6 @@ public class PlayerController : MonoBehaviour
 
         // Find the players Rigidbody component
         mRigidbody = this.gameObject.GetComponent<Rigidbody>();
-        mRigidbody.useGravity = false;
-
-        Cursor.lockState = CursorLockMode.Locked;
 
     }
 
@@ -69,25 +52,51 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
-        //Check if the player is grounded (Store value in mGrounded for use in FixedUpdate)
-        mGrounded = IsPlayerGrounded();
+        Cursor.lockState = CursorLockMode.Locked;
 
-        // Get the players target movement direction
-        mTargetMovementVector = GetPlayerTargetMovementVector();
+        /*
+        * Get the players target movement direction
+        */
+        Vector3 targetRotationVector = GetPlayerTargetRotationVector();
 
-        // Set the target movement vector to none if it is less than the specified deadzone value
-        if (mTargetMovementVector.magnitude < GameConstants.Instance.LeftStickDeadzone)
-            mTargetMovementVector = Vector3.zero;
-
-        // Rotate player character towards target movement direction / flip player to face target movement direction
-        if (Vector3.Angle(mTargetMovementVector, transform.forward) <= mMaxAngleBeforeFlip)
-            transform.forward = Vector3.Lerp(transform.forward, mTargetMovementVector, mRotationLerpSpeed);
+        /*
+        * Rotate player character towards target movement direction
+        */
+        if (Vector3.Angle(targetRotationVector, transform.forward) <= mMaxAngleBeforeFlip)
+            transform.forward = Vector3.Lerp(transform.forward, targetRotationVector, mRotationLerpSpeed);
         else
-            transform.forward = mTargetMovementVector;
+            transform.forward = targetRotationVector;
 
-        // Check if player wants to jump (Make sure player is grounded first)
-        if (mGrounded && Input.GetAxisRaw(GameConstants.Instance.JumpInput) > 0)
-            mShouldJump = true;
+        /*
+         * Check if the player is standing on the ground before applying movement
+         */
+        if (IsPlayerGrounded())
+        {
+            mRigidbody.useGravity = false;
+            /*
+             * Make the player stand still if no input is detected
+             */
+            if (Vector3.zero == targetRotationVector)
+            {
+                mRigidbody.velocity = Vector3.zero;
+            }
+            else
+            {
+                /*
+                 * Project the players target movement direction onto the surface the player is standing on
+                 */
+                Vector3 movementDirection = Vector3.ProjectOnPlane(targetRotationVector, mGroundNormal).normalized * mMovementSpeed;
+
+                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+            }
+        }
+        else
+        {
+            /*
+             * Player is not grounded so apply gravity
+             */
+            mRigidbody.useGravity = true;
+        }
 
 
 
@@ -95,70 +104,25 @@ public class PlayerController : MonoBehaviour
         /*
          * Camera Management
          */
-
-        // Move camera anchor point to current player position
         mCameraAnchorPoint.transform.position = transform.position;
 
-        // Get the camera rotation values from player input
+        /*
+         * Get the rotation through the camera input
+         */
         Vector2 cameraRotationInput = new Vector2(Input.GetAxisRaw(GameConstants.Instance.HorizontalLookInput), Input.GetAxisRaw(GameConstants.Instance.VerticalLookInput));
 
-        // Set input to none if it is less that the specified deadzone value
-        if (cameraRotationInput.magnitude < GameConstants.Instance.RightStickDeadzone)
+        /*
+         * Make sure that the input values are greater than the controller deadzone
+         */
+        if (cameraRotationInput.magnitude < mControllerLookStickDeadzone)
             cameraRotationInput = Vector2.zero;
 
-        // Apply the camera rotation on the X axis
-        mCameraAnchorPoint.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
+        cameraRotationInput = cameraRotationInput.normalized;
 
-    }
-
-
-    private void FixedUpdate()
-    {
-
-        // Check if the player is grounded before applying movement
-        if (mGrounded)
-        {
-            // Player should stand still since there is no movement input
-            if (Vector3.zero == mTargetMovementVector)
-                mRigidbody.velocity = Vector3.zero;
-            else
-            {
-                // Project the players target movement direction onto the surface the player is standing on
-                Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mMovementSpeed;
-
-                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
-            }
-        }
-        else
-        {
-            ApplyGravity();
-
-            // Allow player to control character
-            if (mCanControlInAir)
-            {
-                Vector3 movementDirection = mTargetMovementVector.normalized * mMovementSpeed;
-                movementDirection.y = mRigidbody.velocity.y;
-
-                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
-            }
-        }
-
-
-        if (mShouldJump)
-        {
-            mShouldJump = false;
-            mRigidbody.velocity = new Vector3(mRigidbody.velocity.x, 0, mRigidbody.velocity.z);
-            mRigidbody.AddForce(-GameConstants.Instance.GravityDirection * mJumpForce, ForceMode.Impulse);
-        }
-
-    }
-
-
-    private void ApplyGravity()
-    {
-
-        Vector3 gravity = GameConstants.Instance.GlobalGravityScale * mGravityScale * GameConstants.Instance.GravityDirection;
-        mRigidbody.AddForce(gravity, ForceMode.Acceleration);
+        /*
+         * Apply the camera rotation on the X axis
+         */
+        mCameraAnchorPoint.transform.Rotate(Vector3.up, cameraRotationInput.x * mCameraRotationSensitivity);
 
     }
 
@@ -168,7 +132,7 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit hit;
 
-        if (Physics.SphereCast(transform.position, 0.45f, Vector3.down, out hit, 0.60f, mGroundLayerMaskCheck))
+        if (Physics.SphereCast(transform.position, 0.45f, Vector3.down, out hit, 1.0f, mGroundLayerMaskCheck))
         {
             /*
              * Check if the raycast hit anything (Return false if not)
@@ -196,24 +160,22 @@ public class PlayerController : MonoBehaviour
 
     }
 
-
-    private Vector3 GetPlayerTargetMovementVector()
-    {
-
-        Vector3 targetMovementVector = Vector3.zero;
-
-        targetMovementVector += mPlayerCameraAnchorPoint.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
-        targetMovementVector += mPlayerCameraAnchorPoint.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
-
-        return targetMovementVector.normalized;
-
-    }
-
-
     private void OnDrawGizmos()
     {
 
-        Gizmos.DrawWireSphere(transform.position + Vector3.down * 0.60f, 0.45f);
+        Gizmos.DrawWireSphere(transform.position + Vector3.down, 0.45f);
+
+    }
+
+    private Vector3 GetPlayerTargetRotationVector()
+    {
+
+        Vector3 targetRotationVector = Vector3.zero;
+
+        targetRotationVector += mPlayerCameraAnchorPoint.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
+        targetRotationVector += mPlayerCameraAnchorPoint.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
+
+        return targetRotationVector.normalized;
 
     }
 

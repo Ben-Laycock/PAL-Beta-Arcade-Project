@@ -47,14 +47,6 @@ public class GameConstants : MonoBehaviour
     }
 
 
-    [SerializeField] private string mJumpInput = "Jump";
-    public string JumpInput
-    {
-        get { return mJumpInput; }
-        set { mJumpInput = value; }
-    }
-
-
     [SerializeField] private string mHorizontalLookInput = "HorizontalLook";
     public string HorizontalLookInput
     {
@@ -71,38 +63,11 @@ public class GameConstants : MonoBehaviour
     }
 
 
-    [SerializeField] private float mControllerLeftStickDeadzone = 0.025f;
-    public float LeftStickDeadzone
-    {
-        get { return mControllerLeftStickDeadzone; }
-        set { mControllerLeftStickDeadzone = value; }
-    }
-
-
-    [SerializeField] private float mControllerRightStickDeadzone = 0.025f;
-    public float RightStickDeadzone
-    {
-        get { return mControllerRightStickDeadzone; }
-        set { mControllerRightStickDeadzone = value; }
-    }
-
-
-    [Space][Space][Space]
-
-
     [SerializeField] private Vector3 mGravityDirection = Vector3.down;
     public Vector3 GravityDirection
     {
         get { return mGravityDirection; }
         set { mGravityDirection = value; }
-    }
-
-
-    [SerializeField] private float mGlobalGravityScale = 9.81f;
-    public float GlobalGravityScale
-    {
-        get { return mGlobalGravityScale; }
-        set { mGlobalGravityScale = value; }
     }
 
 }
