@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    [SerializeField] private GameObject mPlayerCameraAnchorPoint = null;
     private Rigidbody mRigidbody = null;
 
     [SerializeField] private float mGravityScale = 1f;
@@ -61,6 +60,8 @@ public class PlayerController : MonoBehaviour
         mRigidbody.useGravity = false;
 
         Cursor.lockState = CursorLockMode.Locked;
+
+        mCameraAnchorPoint = GameObject.Find("CameraAnchorPoint");
 
     }
 
@@ -207,8 +208,8 @@ public class PlayerController : MonoBehaviour
 
         Vector3 targetMovementVector = Vector3.zero;
 
-        targetMovementVector += mPlayerCameraAnchorPoint.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
-        targetMovementVector += mPlayerCameraAnchorPoint.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
+        targetMovementVector += mCameraAnchorPoint.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
+        targetMovementVector += mCameraAnchorPoint.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
 
         return targetMovementVector.normalized;
 
