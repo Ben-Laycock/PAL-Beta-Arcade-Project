@@ -131,10 +131,19 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            ApplyGravity();
 
-            // Allow player to control character
-            if (mCanControlInAir)
+            ApplyGravity();
+            
+            // Apply sliding motion on surface normal
+            if (mSliding)
+            {
+                Vector3 slidingDirection = Vector3.ProjectOnPlane(GameConstants.Instance.GravityDirection, mGroundNormal).normalized * GameConstants.Instance.GlobalGravityScale;
+
+                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, slidingDirection, 0.1f);
+            }
+
+            // Allow player to control character in the air
+            if (mCanControlInAir && !mSliding)
             {
                 Vector3 movementDirection = mTargetMovementVector.normalized * mMovementSpeed;
                 movementDirection.y = mRigidbody.velocity.y;
@@ -170,15 +179,11 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.SphereCast(transform.position, 0.45f, Vector3.down, out hit, 0.60f, mGroundLayerMaskCheck))
         {
-            /*
-             * Check if the raycast hit anything (Return false if not)
-             */
+            // Check if the raycast hit anything (Return false if not)
             if (null == hit.transform)
                 return false;
 
-            /*
-             * Check the angle between -GravityDirection and the slope normal to make sure the player can walk on it
-             */
+            // Check the angle between -GravityDirection and the slope normal to make sure the player can walk on it
             mGroundNormal = hit.normal;
             if (Vector3.Angle(mGroundNormal, -GameConstants.Instance.GravityDirection) > mMaxSlopeAngle)
             {
