@@ -18,6 +18,7 @@ public class CollectableUIClass
     private GameObject mTextObject = null;
     private Text mQuantity = null;
 
+    private bool mAllItemsCollected = false;
 
     public CollectableUIClass(string objectName, GameObject objectObject)
     {
@@ -56,6 +57,14 @@ public class CollectableUIClass
             mQuantity.text = mCurrentQuantity + "/" + mMaxQuantity;
         }
 
+        UpdateCollectableVisuals();
+
+    }
+
+    
+    public void UpdateCollectableVisuals()
+    {
+
     }
 
 
@@ -65,18 +74,34 @@ public class CollectableUIClass
     public void IncreaseCollectableQuantity(int amount = 1)
     {
         mCurrentQuantity += amount;
+        mAllItemsCollected = CheckAllItemsCollected();
+
         UpdateCollectableQuantity();
     }
 
     public void SetCollectableQuantity(int amount = 0)
     {
         mCurrentQuantity = amount;
+        mAllItemsCollected = CheckAllItemsCollected();
+
         UpdateCollectableQuantity();
     }
 
     public void SetMaxQuantity(int amount = 10)
     {
         mMaxQuantity = amount;
+    }
+
+    public bool CheckAllItemsCollected()
+    {
+        if(mMaxQuantity == 0) { return false; }
+        
+        if(mCurrentQuantity == mMaxQuantity)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     //----------------------------------------------------------------------------------//
@@ -105,6 +130,11 @@ public class CollectableUIClass
     public int GetMaxQuantity()
     {
         return mMaxQuantity;
+    }
+
+    public bool GetAllItemsCollected()
+    {
+        return mAllItemsCollected;
     }
 
 

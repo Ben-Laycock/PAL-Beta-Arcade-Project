@@ -69,31 +69,10 @@ public class OptionsMenu : MonoBehaviour
 
         mWindowStyleDropDown.ClearOptions();
         mWindowStyleDropDown.AddOptions(mWindowOptions);
-        //mWindowStyleDropDown.options.Add(new Dropdown.OptionData("Fullscreen"));
-        //mWindowStyleDropDown.options.Add(new Dropdown.OptionData("Windowed"));
-        //mWindowStyleDropDown.options.Add(new Dropdown.OptionData("Borderless"));
         mWindowStyleDropDown.value = PlayerPrefs.GetInt("SelectedWindowValue", 0);
 
         mResolutionDropDown.ClearOptions();
         mResolutionDropDown.AddOptions(mResolutionOptions);
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1920x1080 16:9"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1768x992"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1680x1050 8:5"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1600x1024 25:16"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1600x900 16:9"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1366x768"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1360x768 85:48"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1280x1024 4:5"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1280x960 4:3"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1280x800 8:5"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1280x720 16:9"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1176x664"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1152x864 4:3"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("1024x768 4:3"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("800x600 4:3"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("720x576 5:4"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("720x480 3:2"));
-        //mResolutionDropDown.options.Add(new Dropdown.OptionData("640x480 4:3"));
         mResolutionDropDown.value = PlayerPrefs.GetInt("SelectedResolutionValue", 0);
 
         //Getting Settings
