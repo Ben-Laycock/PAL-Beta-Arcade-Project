@@ -122,14 +122,32 @@ public class PoolSystem : MonoBehaviour
         (GameObject argKey,
         bool argActivateObject = false,
         bool argIgnoreActiveCheck = false,
-        bool argShouldExpandPool = false)
+        bool argShouldExpandPool = false,
+        bool argShouldCreateNonExistingPool = false)
     {
 
         // Check if a pool exists for the given key
-        if (null == argKey || !mPools.ContainsKey(argKey))
+        if (null == argKey)
         {
-            Debug.LogWarning("Pool System: Given invalid key, returning null.");
+            Debug.LogWarning("Pool System: Given null key, returning null.");
             return null;
+        }
+
+        // Create new pool for invalid object key
+        if (!mPools.ContainsKey(argKey))
+        {
+            if (!argShouldCreateNonExistingPool)
+            { 
+                Debug.LogWarning("Pool System: Given invalid key, returning null.");
+                return null;
+            }
+            else
+            {
+                Debug.LogWarning("Pool System: Given invalid key, creating pool.");
+                CreatePool(argKey, mDefaultNumberOfObjectsToCreate);
+                // Pool has just been created so return object at the back of the pool
+                return mPools[argKey][mPools[argKey].Count-1];
+            }
         }
 
         // Check to find an inactive object

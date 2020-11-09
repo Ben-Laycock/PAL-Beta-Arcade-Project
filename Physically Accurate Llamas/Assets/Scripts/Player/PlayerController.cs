@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
     private bool mGrounded = false;
 
     [SerializeField] private float mMaxSlopeAngle = 30f;
-    [SerializeField] private float mMaxSlideAngle = 89f;
 
     [Tooltip("Used to toggle player character control while not grounded.")]
     [SerializeField] private bool mCanControlInAir = true;
@@ -45,9 +44,11 @@ public class PlayerController : MonoBehaviour
      */
     [SerializeField] private GameObject mCameraAnchorPoint = null;
 
+    [SerializeField] private bool mEnableAutomaticCameraAdjustment = false;
     private bool mShouldAutoAdjustCamera = false;
     [SerializeField] private float mTimeUntilAutomaticCameraAdjustment = 2f;
-    private float mAutoAdjustmentTimer = 0f;
+    private float mTimeUntilStartOfAutomaticAdjustment = 0f;
+    [SerializeField] private float mCameraAutomaticAdjustmentSpeed = 2f;
 
     [SerializeField] private float mCameraRotationSensitivity = 50f;
 
@@ -84,7 +85,10 @@ public class PlayerController : MonoBehaviour
         if (Vector3.Angle(mTargetMovementVector, transform.forward) <= mMaxAngleBeforeFlip)
             transform.forward = Vector3.Lerp(transform.forward, mTargetMovementVector, mRotationLerpSpeed);
         else
+        {
             transform.forward = mTargetMovementVector;
+            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+        }
 
         // Check if player wants to jump (Make sure player is grounded first)
         if (mGrounded && Input.GetAxisRaw(GameConstants.Instance.JumpInput) > 0)
@@ -96,6 +100,7 @@ public class PlayerController : MonoBehaviour
         /*
          * Camera Management
          */
+        mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
 
         // Move camera anchor point to current player position
         mCameraAnchorPoint.transform.position = transform.position;
@@ -105,10 +110,27 @@ public class PlayerController : MonoBehaviour
 
         // Set input to none if it is less that the specified deadzone value
         if (cameraRotationInput.magnitude < GameConstants.Instance.RightStickDeadzone)
+        {
             cameraRotationInput = Vector2.zero;
+        }
+        else
+        {
+            // Camera input detected
+            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+        }
+
+        mShouldAutoAdjustCamera = (mTimeUntilStartOfAutomaticAdjustment <= 0.0f);
 
         // Apply the camera rotation on the X axis
-        mCameraAnchorPoint.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
+        if (mEnableAutomaticCameraAdjustment && mShouldAutoAdjustCamera)
+        {
+            // Automatically adjust camera to player direction
+            mCameraAnchorPoint.transform.forward = Vector3.Lerp(mCameraAnchorPoint.transform.forward, transform.forward, mCameraAutomaticAdjustmentSpeed);
+        }
+        else
+        {
+            mCameraAnchorPoint.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
+        }
 
     }
 
