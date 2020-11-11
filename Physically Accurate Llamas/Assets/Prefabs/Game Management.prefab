@@ -50,6 +50,7 @@ MonoBehaviour:
   mJumpInput: Jump
   mHorizontalLookInput: HorizontalLook
   mVerticalLookInput: VerticalLook
+  mRunInput: Run
   mControllerLeftStickDeadzone: 0.025
   mControllerRightStickDeadzone: 0.025
   mGravityDirection: {x: 0, y: -1, z: 0}
@@ -79,4 +80,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dbe5fff2210ddd41a0a49fa64d5cb3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mAudioObject: {fileID: 0}
+  mAudioObject: {fileID: 6825676093282867658, guid: d363c5ff9a20c904eb099fce663ef971,
+    type: 3}

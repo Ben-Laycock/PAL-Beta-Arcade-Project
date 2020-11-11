@@ -473,6 +473,16 @@ PrefabInstance:
       propertyPath: mCameraAnchorPoint
       value: 
       objectReference: {fileID: 797599554}
+    - target: {fileID: 6947377284900201094, guid: c7eaf129f9f80874b8bead9126a3e201,
+        type: 3}
+      propertyPath: mRunningSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6947377284900201094, guid: c7eaf129f9f80874b8bead9126a3e201,
+        type: 3}
+      propertyPath: mGravityScale
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7eaf129f9f80874b8bead9126a3e201, type: 3}
 --- !u!1 &638987706
@@ -1069,7 +1079,7 @@ Transform:
   m_LocalScale: {x: 4, y: 4.5942, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 272.328, z: 0}
 --- !u!1 &1142873869
 GameObject:
@@ -1160,7 +1170,7 @@ Transform:
   m_LocalScale: {x: 4, y: 7.375069, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: -90.893005, z: 0}
 --- !u!1001 &1148616421
 PrefabInstance:
@@ -1335,7 +1345,7 @@ Transform:
   m_LocalScale: {x: 4, y: 7.375069, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: -90.893005, z: 0}
 --- !u!1 &1355447868
 GameObject:
@@ -1517,7 +1527,7 @@ Transform:
   m_LocalScale: {x: 4, y: 3, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 272.328, z: 0}
 --- !u!1 &1586152750
 GameObject:
@@ -1699,7 +1709,7 @@ Transform:
   m_LocalScale: {x: 4, y: 13.123198, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: -90.893005, z: 0}
 --- !u!1001 &1739871506
 PrefabInstance:
@@ -2286,7 +2296,7 @@ RectTransform:
   m_Children:
   - {fileID: 1806815198687911980}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

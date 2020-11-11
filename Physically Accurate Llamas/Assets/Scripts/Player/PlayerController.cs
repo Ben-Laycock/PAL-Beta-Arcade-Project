@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool mCanControlInAir = true;
 
     [SerializeField] private float mMovementSpeed = 5f;
+    [SerializeField] private float mRunningSpeed = 10f;
+
+    private bool mShouldRun = false;
 
     [Tooltip("Time taken for character to get to top speed. Smaller values take longer.")]
     [SerializeField] private float mTimeToLerpToMaxSpeed = 0.1f;
@@ -92,6 +95,10 @@ public class PlayerController : MonoBehaviour
         if (mTargetMovementVector.magnitude < GameConstants.Instance.LeftStickDeadzone)
             mTargetMovementVector = Vector3.zero;
 
+        mShouldRun = Input.GetAxisRaw(GameConstants.Instance.RunInput) > 0;
+
+
+
         // Rotate player character towards target movement direction / flip player to face target movement direction
         if (Vector3.Angle(mTargetMovementVector, transform.forward) <= mMaxAngleBeforeFlip)
             transform.forward = Vector3.Lerp(transform.forward, mTargetMovementVector, mRotationLerpSpeed);
@@ -100,6 +107,9 @@ public class PlayerController : MonoBehaviour
             transform.forward = mTargetMovementVector;
             mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
         }
+
+
+
 
         // Check if player wants to jump (Make sure player is grounded first)
         if (mGrounded && Input.GetAxisRaw(GameConstants.Instance.JumpInput) > 0)
@@ -160,16 +170,29 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                mMovementState = EMovementState.eWalking;
+                if (!mShouldRun)
+                {
+                    mMovementState = EMovementState.eWalking;
 
-                // Project the players target movement direction onto the surface the player is standing on
-                Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mMovementSpeed;
+                    // Project the players target movement direction onto the surface the player is standing on
+                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mMovementSpeed;
 
-                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+                    mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+                }
+                else
+                {
+                    mMovementState = EMovementState.eRunning;
+
+                    // Project the players target movement direction onto the surface the player is standing on
+                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mRunningSpeed;
+
+                    mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+                }
             }
         }
         else
         {
+            mMovementState = EMovementState.eFalling;
 
             ApplyGravity();
             

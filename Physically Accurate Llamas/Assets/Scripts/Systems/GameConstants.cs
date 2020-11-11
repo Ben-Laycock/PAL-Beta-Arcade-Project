@@ -71,6 +71,14 @@ public class GameConstants : MonoBehaviour
     }
 
 
+    [SerializeField] private string mRunInput = "Run";
+    public string RunInput
+    {
+        get { return mRunInput; }
+        set { mRunInput = value; }
+    }
+
+
     [SerializeField] private float mControllerLeftStickDeadzone = 0.025f;
     public float LeftStickDeadzone
     {
