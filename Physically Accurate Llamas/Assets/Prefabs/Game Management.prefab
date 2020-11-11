@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8216019522201234808}
   - component: {fileID: 8216019522201234809}
+  - component: {fileID: -6189428516532980206}
+  - component: {fileID: -2489878005261620330}
   m_Layer: 0
   m_Name: Game Management
   m_TagString: Untagged
@@ -52,3 +54,29 @@ MonoBehaviour:
   mControllerRightStickDeadzone: 0.025
   mGravityDirection: {x: 0, y: -1, z: 0}
   mGlobalGravityScale: 9.81
+--- !u!114 &-6189428516532980206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8216019522201234810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf399cbcb963e0b4e8ca8e74dbef5eb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mDefaultNumberOfObjectsToCreate: 10
+--- !u!114 &-2489878005261620330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8216019522201234810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dbe5fff2210ddd41a0a49fa64d5cb3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mAudioObject: {fileID: 0}

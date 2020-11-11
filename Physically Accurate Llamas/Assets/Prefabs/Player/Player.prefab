@@ -89,6 +89,7 @@ GameObject:
   - component: {fileID: 6947377284900201099}
   - component: {fileID: 6947377284900201098}
   - component: {fileID: 6947377284900201094}
+  - component: {fileID: 3610306958042745576}
   - component: {fileID: 6947377284900201101}
   - component: {fileID: 6947377284900201097}
   m_Layer: 0
@@ -176,7 +177,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   mMaxSlopeAngle: 45
-  mMaxSlideAngle: 89
   mCanControlInAir: 1
   mMovementSpeed: 10
   mTimeToLerpToMaxSpeed: 0.1
@@ -185,8 +185,22 @@ MonoBehaviour:
   mSliding: 0
   mJumpForce: 15
   mCameraAnchorPoint: {fileID: 0}
+  mEnableAutomaticCameraAdjustment: 0
   mTimeUntilAutomaticCameraAdjustment: 2
+  mCameraAutomaticAdjustmentSpeed: 2
   mCameraRotationSensitivity: 4
+--- !u!114 &3610306958042745576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6947377284900201100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c13abc2cf0141114a88056b5deeabdd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &6947377284900201101
 CapsuleCollider:
   m_ObjectHideFlags: 0
