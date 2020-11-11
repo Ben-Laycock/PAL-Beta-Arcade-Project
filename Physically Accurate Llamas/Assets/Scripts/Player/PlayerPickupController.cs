@@ -18,7 +18,7 @@ public class PlayerPickupController : MonoBehaviour
     {
         mPlayerTransform = this.gameObject.GetComponent<Transform>();
         mPickupGameObjects = new List<GameObject>();
-        mCollectableUIManagerObject = GameObject.Find("Canvas").transform.Find("CollectableGUI").transform.Find("CollectableUIManager").gameObject;
+        mCollectableUIManagerObject = GameObject.Find("CollectableUICanvas").transform.Find("CollectableGUI").transform.Find("CollectableUIManager").gameObject;
         mCollectableUIManagerScript = mCollectableUIManagerObject.GetComponent<CollectableUIManager>();
     }
 
