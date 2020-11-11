@@ -5,6 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
+    public enum EMovementState
+    {
+        eIdle,
+        eWalking,
+        eRunning,
+        eFalling
+    }
+
+
     private Rigidbody mRigidbody = null;
 
     [SerializeField] private float mGravityScale = 1f;
@@ -34,6 +43,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float mJumpForce = 10f;
 
     private Vector3 mTargetMovementVector = Vector3.zero;
+
+    private EMovementState mMovementState = EMovementState.eIdle;
 
 
     [Space][Space][Space]
@@ -143,9 +154,14 @@ public class PlayerController : MonoBehaviour
         {
             // Player should stand still since there is no movement input
             if (Vector3.zero == mTargetMovementVector)
+            {
+                mMovementState = EMovementState.eIdle;
                 mRigidbody.velocity = Vector3.zero;
+            }
             else
             {
+                mMovementState = EMovementState.eWalking;
+
                 // Project the players target movement direction onto the surface the player is standing on
                 Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mMovementSpeed;
 
