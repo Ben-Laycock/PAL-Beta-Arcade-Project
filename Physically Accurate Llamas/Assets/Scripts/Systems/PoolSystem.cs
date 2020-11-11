@@ -145,6 +145,12 @@ public class PoolSystem : MonoBehaviour
             {
                 Debug.LogWarning("Pool System: Given invalid key, creating pool.");
                 CreatePool(argKey, mDefaultNumberOfObjectsToCreate);
+
+                if (argActivateObject)
+                    mPools[argKey][mPools[argKey].Count - 1].SetActive(true);
+                else
+                    mPools[argKey][mPools[argKey].Count - 1].SetActive(false);
+
                 // Pool has just been created so return object at the back of the pool
                 return mPools[argKey][mPools[argKey].Count-1];
             }
