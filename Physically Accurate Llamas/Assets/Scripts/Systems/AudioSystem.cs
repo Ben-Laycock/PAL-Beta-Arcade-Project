@@ -31,6 +31,18 @@ public class AudioSystem : MonoBehaviour
     }
 
 
+    private void Start()
+    {
+
+        // Get pool system to create a pool of audio objects
+        if (null != PoolSystem.Instance)
+        {
+            PoolSystem.Instance.CreatePool(mAudioObject, 20, false);
+        }
+
+    }
+
+
     [SerializeField] private Dictionary<string, AudioClip> mSounds = new Dictionary<string, AudioClip>();
     [SerializeField] private GameObject mAudioObject = null;
 
@@ -86,7 +98,7 @@ public class AudioSystem : MonoBehaviour
             return;
         }
 
-        GameObject audioObject = PoolSystem.Instance.GetObjectFromPool(mAudioObject, argShouldExpandPool: true);
+        GameObject audioObject = PoolSystem.Instance.GetObjectFromPool(mAudioObject, argShouldExpandPool: true, argShouldCreateNonExistingPool: true);
         AudioSource audioSource = audioObject.GetComponent<AudioSource>();
         DeactivateObjectAfterTime deactivationCompononent = audioObject.GetComponent<DeactivateObjectAfterTime>();
 
@@ -115,7 +127,7 @@ public class AudioSystem : MonoBehaviour
     public GameObject GetAudioObject()
     {
 
-        return PoolSystem.Instance.GetObjectFromPool(mAudioObject, argShouldExpandPool: true);
+        return PoolSystem.Instance.GetObjectFromPool(mAudioObject, argShouldExpandPool: true, argShouldCreateNonExistingPool: true);
 
     }
 
