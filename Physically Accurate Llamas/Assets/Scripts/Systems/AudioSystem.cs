@@ -108,7 +108,7 @@ public class AudioSystem : MonoBehaviour
             deactivationCompononent.ResetTimer();
 
             audioSource.clip = mSounds[argKey];
-            audioSource.volume = 1f;
+            audioSource.volume = argVolume * (float)PlayerPrefs.GetInt("AudioVolumeSliderValue") / 100.0f;
 
             audioObject.SetActive(true);
             audioSource.Play();
