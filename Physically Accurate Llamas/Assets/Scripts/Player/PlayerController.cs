@@ -121,6 +121,14 @@ public class PlayerController : MonoBehaviour
         /*
          * Camera Management
          */
+        ManageCamera();
+
+    }
+
+
+    public void ManageCamera()
+    {
+
         mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
 
         // Move camera anchor point to current player position
@@ -181,6 +189,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
+                    print("Running");
                     mMovementState = EMovementState.eRunning;
 
                     // Project the players target movement direction onto the surface the player is standing on
@@ -282,6 +291,12 @@ public class PlayerController : MonoBehaviour
 
         Gizmos.DrawWireSphere(transform.position + Vector3.down * 0.60f, 0.45f);
 
+    }
+
+    
+    public EMovementState GetMovementState()
+    {
+        return mMovementState;
     }
 
 }

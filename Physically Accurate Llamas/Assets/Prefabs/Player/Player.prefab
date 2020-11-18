@@ -272,7 +272,7 @@ MonoBehaviour:
   mMaxSlopeAngle: 45
   mCanControlInAir: 1
   mMovementSpeed: 10
-  mRunningSpeed: 10
+  mRunningSpeed: 20
   mTimeToLerpToMaxSpeed: 0.1
   mRotationLerpSpeed: 0.1
   mMaxAngleBeforeFlip: 130
@@ -282,7 +282,7 @@ MonoBehaviour:
   mEnableAutomaticCameraAdjustment: 0
   mTimeUntilAutomaticCameraAdjustment: 2
   mCameraAutomaticAdjustmentSpeed: 2
-  mCameraRotationSensitivity: 4
+  mCameraRotationSensitivity: 50
 --- !u!114 &3610306958042745576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,6 +297,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mPickupObjectCollection:
   - {fileID: 4582507871128432115, guid: cefa410a576ed9c4a9b83d9585118624, type: 3}
+  mPickupRange: 1
+  mPickupCollectSpeed: 0.25
+  mPickupSpawnForce: 4
 --- !u!136 &6947377284900201101
 CapsuleCollider:
   m_ObjectHideFlags: 0
