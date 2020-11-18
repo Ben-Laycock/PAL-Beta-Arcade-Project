@@ -33,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -30}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8216019522201234809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,4 +95,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e253a04fe9c71ad4bb9ea667ee193198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mSounds: []
+  mSounds:
+  - mName: Pickup
+    mClip: {fileID: 8300000, guid: 129997d603c05844e8b81da6db278a32, type: 3}
+  - mName: ButtonHover
+    mClip: {fileID: 8300000, guid: 0aa521eb4f1c8b74e9b4bd733d379122, type: 3}
+  - mName: CloseMenu
+    mClip: {fileID: 8300000, guid: 9802651ee0733db4494fc358add5cf87, type: 3}
+  - mName: OpenMenu
+    mClip: {fileID: 8300000, guid: 690b168bd8815394795aaf6664e75c61, type: 3}
+  - mName: SliderClick
+    mClip: {fileID: 8300000, guid: b3425480778e7604b87e6c467586cd09, type: 3}

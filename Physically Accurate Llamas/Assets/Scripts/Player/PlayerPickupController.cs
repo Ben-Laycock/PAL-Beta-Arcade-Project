@@ -9,13 +9,24 @@ public class PlayerPickupController : MonoBehaviour
 
     [Tooltip("Pickup collection list, add a pickup prefab here.")]
     [SerializeField] GameObject[] mPickupObjectCollection = { };
-    
+
+    [Tooltip("Pickup range which determines how near a player should be near pickups before they collect.")]
+    [SerializeField] private float mPickupRange = 1;
+
+    [Tooltip("Pickup collection speed which determines how fast a pickup moves towards the player.")]
+    [SerializeField] private float mPickupCollectSpeed = 0.25f;
+
+    [Tooltip("Determines how much of a force should be applied when the pickup spawns from a crate.")]
+    [SerializeField] private float mPickupSpawnForce = 4;
+
     private GameObject mCollectableUIManagerObject;
     private CollectableUIManager mCollectableUIManagerScript;
 
     // Start is called before the first frame update
     void Start()
     {
+        this.gameObject.GetComponent<SphereCollider>().radius = mPickupRange;
+
         mPlayerTransform = this.gameObject.GetComponent<Transform>();
         mPickupGameObjects = new List<GameObject>();
         mCollectableUIManagerObject = GameObject.Find("CollectableUICanvas").transform.Find("CollectableGUI").transform.Find("CollectableUIManager").gameObject;
@@ -80,7 +91,7 @@ public class PlayerPickupController : MonoBehaviour
                     Vector3 pickupForceDirection = Quaternion.Euler(0, tempRotationIncrement, 0) * Vector3.forward;
 
                     // Apply a force towards a specific direction and rotation here.
-                    pickupObjectScript.ApplyForce(pickupCrateTransform.position + new Vector3(0, pickupCrateTransform.localScale.y / 2, 0) + pickupCrateTransform.up, pickupForceDirection.normalized, 4);
+                    pickupObjectScript.ApplyForce(pickupCrateTransform.position + new Vector3(0, pickupCrateTransform.localScale.y / 2, 0) + pickupCrateTransform.up, pickupForceDirection.normalized, mPickupSpawnForce);
 
                     tempRotationIncrement += rotationIncrementPerPickup;
                 }
@@ -104,7 +115,7 @@ public class PlayerPickupController : MonoBehaviour
 
             if (gameObjectPickupScript.hasLanded)
             {
-                gameObjectTransform.position = Vector3.MoveTowards(gameObjectTransform.position, mPlayerTransform.position, 0.25f);
+                gameObjectTransform.position = Vector3.MoveTowards(gameObjectTransform.position, mPlayerTransform.position, mPickupCollectSpeed);
                 gameObjectTransform.localScale = new Vector3(Mathf.Clamp(playerToPickupMagnitude, 0, gameObjectPickupScript.originalScale.x), Mathf.Clamp(playerToPickupMagnitude, 0, gameObjectPickupScript.originalScale.y), Mathf.Clamp(playerToPickupMagnitude, 0, gameObjectPickupScript.originalScale.z));
                 gameObjectRenderer.material.color = new Color(gameObjectRenderer.material.color.r, gameObjectRenderer.material.color.g, gameObjectRenderer.material.color.b, Mathf.Clamp(playerToPickupMagnitude, 0.0f, 1.0f));
             }
@@ -125,6 +136,8 @@ public class PlayerPickupController : MonoBehaviour
                 gameObjectParticleSystem.Stop();
 
                 mPickupGameObjects.RemoveAt(i);
+
+                AudioSystem.Instance.PlaySound("Pickup", 0.2f);
             }
         }
     }
