@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 6947377284900201101}
   - component: {fileID: 6947377284900201097}
   - component: {fileID: 867325508891062104}
+  - component: {fileID: 363927415}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -282,7 +283,7 @@ MonoBehaviour:
   mEnableAutomaticCameraAdjustment: 0
   mTimeUntilAutomaticCameraAdjustment: 2
   mCameraAutomaticAdjustmentSpeed: 2
-  mCameraRotationSensitivity: 50
+  mCameraRotationSensitivity: 4
 --- !u!114 &3610306958042745576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,7 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mPickupObjectCollection:
   - {fileID: 4582507871128432115, guid: cefa410a576ed9c4a9b83d9585118624, type: 3}
-  mPickupRange: 1
+  mPickupRange: 10
   mPickupCollectSpeed: 0.25
   mPickupSpawnForce: 4
 --- !u!136 &6947377284900201101
@@ -346,6 +347,19 @@ MonoBehaviour:
   mProjectile: {fileID: 7825209675920421973, guid: 548a6caa8276dd343bc8b4629ae0bea0,
     type: 3}
   mProjectileForce: 100
+--- !u!135 &363927415
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6947377284900201100}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &6947377285095099607
 PrefabInstance:
   m_ObjectHideFlags: 0
