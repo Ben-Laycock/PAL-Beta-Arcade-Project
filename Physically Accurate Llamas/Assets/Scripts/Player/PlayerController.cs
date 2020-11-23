@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour
         eIdle,
         eWalking,
         eRunning,
-        eFalling
+        eFalling,
+        eGliding
     }
 
 
@@ -87,6 +88,8 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
 
+
+        // Find the camera pivot points in the scene
         mCameraRotationXPivot = GameObject.Find("CameraRotationXPivot");
         mCameraRotationYPivot = GameObject.Find("CameraRotationYPivot");
 
@@ -102,30 +105,33 @@ public class PlayerController : MonoBehaviour
         mTimeSincePreviousDashAttack = Mathf.Clamp(mTimeSincePreviousDashAttack, 0, mTimeBetweenDashAttacks);
 
 
-        //Check if the player is grounded (Store value in mGrounded for use in FixedUpdate)
+        //Check if the player is grounded
         mGrounded = IsPlayerGrounded();
 
         // Get the players target movement direction
         mTargetMovementVector = GetPlayerTargetMovementVector();
 
-        // Set the target movement vector to none if it is less than the specified deadzone value
+        // Account for controller stick deadzones
         if (mTargetMovementVector.magnitude < GameConstants.Instance.LeftStickDeadzone)
             mTargetMovementVector = Vector3.zero;
+        
 
-        mShouldRun = Input.GetAxisRaw(GameConstants.Instance.RunInput) > 0;
-
-
-
-        // Rotate player character towards target movement direction / flip player to face target movement direction
-        if (Vector3.Angle(mTargetMovementVector, transform.forward) <= mMaxAngleBeforeFlip)
-            transform.forward = Vector3.Lerp(transform.forward, mTargetMovementVector, mRotationLerpSpeed);
-        else
+        // Manage player movement state machine
+        if (mGrounded)
         {
-            transform.forward = mTargetMovementVector;
-            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+            if (Vector3.zero == mTargetMovementVector)
+                mMovementState = EMovementState.eIdle;
+            else
+                mMovementState = EMovementState.eWalking;
         }
 
 
+
+        //mShouldRun = Input.GetAxisRaw(GameConstants.Instance.RunInput) > 0;
+
+
+        // Rotate player character towards target movement direction / flip player to face target movement direction
+        RotatePlayerCharacter();
 
 
         // Check if player wants to jump (Make sure player is grounded first)
@@ -133,67 +139,13 @@ public class PlayerController : MonoBehaviour
             mShouldJump = true;
 
 
-
-
         // Check if the player wants to dash
         if (Input.GetKeyDown(KeyCode.M) && mMovementState == EMovementState.eWalking && mTimeSincePreviousDashAttack >= mTimeBetweenDashAttacks)
             mShouldDash = true;
 
 
-
-
-        /*
-         * Camera Management
-         */
+        // Camera Management
         ManageCamera();
-
-    }
-
-
-    public void ManageCamera()
-    {
-
-        mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
-
-        // Move camera anchor point to current player position
-        mCameraRotationXPivot.transform.position = transform.position;
-
-        // Get the camera rotation values from player input
-        Vector2 cameraRotationInput = new Vector2(Input.GetAxisRaw(GameConstants.Instance.HorizontalLookInput), Input.GetAxisRaw(GameConstants.Instance.VerticalLookInput));
-
-        // Set input to none if it is less that the specified deadzone value
-        if (cameraRotationInput.magnitude < GameConstants.Instance.RightStickDeadzone)
-        {
-            cameraRotationInput = Vector2.zero;
-        }
-        else
-        {
-            // Camera input detected
-            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
-        }
-
-        mShouldAutoAdjustCamera = (mTimeUntilStartOfAutomaticAdjustment <= 0.0f);
-
-        // Apply the camera rotation on the X axis
-        if (mEnableAutomaticCameraAdjustment && mShouldAutoAdjustCamera)
-        {
-            // Automatically adjust camera to player direction
-            mCameraRotationXPivot.transform.forward = Vector3.Lerp(mCameraRotationXPivot.transform.forward, transform.forward, mCameraAutomaticAdjustmentSpeed);
-        }
-        else
-        {
-            mCameraRotationXPivot.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
-        }
-
-
-        // Y Pivot
-        mYRotation += cameraRotationInput.y * mCameraRotationSensitivity;
-        mYRotation = Mathf.Clamp(mYRotation, mYRotationMinMax.x, mYRotationMinMax.y);
-
-        if (!mInvertYRotation)
-            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(mYRotation, 0, 0);
-        else
-            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(-mYRotation, 0, 0);
 
     }
 
@@ -326,6 +278,68 @@ public class PlayerController : MonoBehaviour
         targetMovementVector += mCameraRotationXPivot.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
 
         return targetMovementVector.normalized;
+
+    }
+
+
+    public void ManageCamera()
+    {
+
+        mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
+
+        // Move camera anchor point to current player position
+        mCameraRotationXPivot.transform.position = transform.position;
+
+        // Get the camera rotation values from player input
+        Vector2 cameraRotationInput = new Vector2(Input.GetAxisRaw(GameConstants.Instance.HorizontalLookInput), Input.GetAxisRaw(GameConstants.Instance.VerticalLookInput));
+
+        // Set input to none if it is less that the specified deadzone value
+        if (cameraRotationInput.magnitude < GameConstants.Instance.RightStickDeadzone)
+        {
+            cameraRotationInput = Vector2.zero;
+        }
+        else
+        {
+            // Camera input detected
+            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+        }
+
+        mShouldAutoAdjustCamera = (mTimeUntilStartOfAutomaticAdjustment <= 0.0f);
+
+        // Apply the camera rotation on the X axis
+        if (mEnableAutomaticCameraAdjustment && mShouldAutoAdjustCamera)
+        {
+            // Automatically adjust camera to player direction
+            mCameraRotationXPivot.transform.forward = Vector3.Lerp(mCameraRotationXPivot.transform.forward, transform.forward, mCameraAutomaticAdjustmentSpeed);
+        }
+        else
+        {
+            mCameraRotationXPivot.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
+        }
+
+
+        // Y Pivot
+        mYRotation += cameraRotationInput.y * mCameraRotationSensitivity;
+        mYRotation = Mathf.Clamp(mYRotation, mYRotationMinMax.x, mYRotationMinMax.y);
+
+        if (!mInvertYRotation)
+            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(mYRotation, 0, 0);
+        else
+            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(-mYRotation, 0, 0);
+
+    }
+
+
+    public void RotatePlayerCharacter()
+    {
+
+        if (Vector3.Angle(mTargetMovementVector, transform.forward) <= mMaxAngleBeforeFlip)
+            transform.forward = Vector3.Lerp(transform.forward, mTargetMovementVector, mRotationLerpSpeed);
+        else
+        {
+            transform.forward = mTargetMovementVector;
+            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+        }
 
     }
 
