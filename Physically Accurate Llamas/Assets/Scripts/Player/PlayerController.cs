@@ -44,19 +44,28 @@ public class PlayerController : MonoBehaviour
 
     private bool mShouldJump = false;
     [SerializeField] private float mJumpForce = 10f;
+    
+    private bool mShouldDash = false;
+    [SerializeField] private float mTimeBetweenDashAttacks = 3f;
+    private float mTimeSincePreviousDashAttack = 0f;
 
     private Vector3 mTargetMovementVector = Vector3.zero;
 
     private EMovementState mMovementState = EMovementState.eIdle;
 
 
-    [Space][Space][Space]
+    [Space]
+    [Space]
+    [Space]
 
 
     /*
      * Camera Variables
      */
-    [SerializeField] private GameObject mCameraAnchorPoint = null;
+    [SerializeField] private bool mInvertYRotation = false;
+    [SerializeField] private Vector2 mYRotationMinMax = new Vector2(-15.0f, 30.0f);
+    [SerializeField] private GameObject mCameraRotationXPivot = null;
+    [SerializeField] private GameObject mCameraRotationYPivot = null;
 
     [SerializeField] private bool mEnableAutomaticCameraAdjustment = false;
     private bool mShouldAutoAdjustCamera = false;
@@ -65,6 +74,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float mCameraAutomaticAdjustmentSpeed = 2f;
 
     [SerializeField] private float mCameraRotationSensitivity = 50f;
+
+    float mYRotation = 0f;
 
 
     void Start()
@@ -76,7 +87,8 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
 
-        mCameraAnchorPoint = GameObject.Find("CameraAnchorPoint");
+        mCameraRotationXPivot = GameObject.Find("CameraRotationXPivot");
+        mCameraRotationYPivot = GameObject.Find("CameraRotationYPivot");
 
     }
 
@@ -84,6 +96,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+
+        // Update dash attack timer
+        mTimeSincePreviousDashAttack += Time.deltaTime;
+        mTimeSincePreviousDashAttack = Mathf.Clamp(mTimeSincePreviousDashAttack, 0, mTimeBetweenDashAttacks);
+
 
         //Check if the player is grounded (Store value in mGrounded for use in FixedUpdate)
         mGrounded = IsPlayerGrounded();
@@ -118,6 +135,13 @@ public class PlayerController : MonoBehaviour
 
 
 
+        // Check if the player wants to dash
+        if (Input.GetKeyDown(KeyCode.M) && mMovementState == EMovementState.eWalking && mTimeSincePreviousDashAttack >= mTimeBetweenDashAttacks)
+            mShouldDash = true;
+
+
+
+
         /*
          * Camera Management
          */
@@ -132,7 +156,7 @@ public class PlayerController : MonoBehaviour
         mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
 
         // Move camera anchor point to current player position
-        mCameraAnchorPoint.transform.position = transform.position;
+        mCameraRotationXPivot.transform.position = transform.position;
 
         // Get the camera rotation values from player input
         Vector2 cameraRotationInput = new Vector2(Input.GetAxisRaw(GameConstants.Instance.HorizontalLookInput), Input.GetAxisRaw(GameConstants.Instance.VerticalLookInput));
@@ -154,12 +178,22 @@ public class PlayerController : MonoBehaviour
         if (mEnableAutomaticCameraAdjustment && mShouldAutoAdjustCamera)
         {
             // Automatically adjust camera to player direction
-            mCameraAnchorPoint.transform.forward = Vector3.Lerp(mCameraAnchorPoint.transform.forward, transform.forward, mCameraAutomaticAdjustmentSpeed);
+            mCameraRotationXPivot.transform.forward = Vector3.Lerp(mCameraRotationXPivot.transform.forward, transform.forward, mCameraAutomaticAdjustmentSpeed);
         }
         else
         {
-            mCameraAnchorPoint.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
+            mCameraRotationXPivot.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
         }
+
+
+        // Y Pivot
+        mYRotation += cameraRotationInput.y * mCameraRotationSensitivity;
+        mYRotation = Mathf.Clamp(mYRotation, mYRotationMinMax.x, mYRotationMinMax.y);
+
+        if (!mInvertYRotation)
+            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(mYRotation, 0, 0);
+        else
+            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(-mYRotation, 0, 0);
 
     }
 
@@ -189,13 +223,15 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    print("Running");
-                    mMovementState = EMovementState.eRunning;
+                    // Running
 
-                    // Project the players target movement direction onto the surface the player is standing on
-                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mRunningSpeed;
 
-                    mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+                    //mMovementState = EMovementState.eRunning;
+
+                    //// Project the players target movement direction onto the surface the player is standing on
+                    //Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mRunningSpeed;
+
+                    //mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
                 }
             }
         }
@@ -229,6 +265,14 @@ public class PlayerController : MonoBehaviour
             mShouldJump = false;
             mRigidbody.velocity = new Vector3(mRigidbody.velocity.x, 0, mRigidbody.velocity.z);
             mRigidbody.AddForce(-GameConstants.Instance.GravityDirection * mJumpForce, ForceMode.Impulse);
+        }
+
+        
+        if (mShouldDash)
+        {
+            mShouldDash = false;
+            mTimeSincePreviousDashAttack = 0f;
+            mRigidbody.AddForce(transform.forward * mJumpForce, ForceMode.Impulse);
         }
 
     }
@@ -278,8 +322,8 @@ public class PlayerController : MonoBehaviour
 
         Vector3 targetMovementVector = Vector3.zero;
 
-        targetMovementVector += mCameraAnchorPoint.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
-        targetMovementVector += mCameraAnchorPoint.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
+        targetMovementVector += mCameraRotationXPivot.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
+        targetMovementVector += mCameraRotationXPivot.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
 
         return targetMovementVector.normalized;
 
