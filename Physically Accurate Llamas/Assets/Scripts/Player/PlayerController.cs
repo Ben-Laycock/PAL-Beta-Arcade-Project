@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
     {
         eIdle,
         eWalking,
-        eRunning,
         eFalling,
         eGliding
     }
@@ -18,6 +17,10 @@ public class PlayerController : MonoBehaviour
     private Rigidbody mRigidbody = null;
 
     [SerializeField] private float mGravityScale = 1f;
+
+
+    [SerializeField] private float mGlidingGravityScale = 0.25f;
+
 
     [SerializeField] private LayerMask mGroundLayerMaskCheck = new LayerMask();
     private bool mGrounded = false;
@@ -45,10 +48,13 @@ public class PlayerController : MonoBehaviour
 
     private bool mShouldJump = false;
     [SerializeField] private float mJumpForce = 10f;
-    
+
     private bool mShouldDash = false;
     [SerializeField] private float mTimeBetweenDashAttacks = 3f;
     private float mTimeSincePreviousDashAttack = 0f;
+    [Tooltip("How long the dash should remain active after the keypress")]
+    [SerializeField] private float mLengthOfDash = 1f;
+    private bool mIsDashing = false;
 
     private Vector3 mTargetMovementVector = Vector3.zero;
 
@@ -95,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    
+
 
     void Update()
     {
@@ -103,6 +109,7 @@ public class PlayerController : MonoBehaviour
         // Update dash attack timer
         mTimeSincePreviousDashAttack += Time.deltaTime;
         mTimeSincePreviousDashAttack = Mathf.Clamp(mTimeSincePreviousDashAttack, 0, mTimeBetweenDashAttacks);
+        mIsDashing = mTimeSincePreviousDashAttack <= mLengthOfDash;
 
 
         //Check if the player is grounded
@@ -114,7 +121,7 @@ public class PlayerController : MonoBehaviour
         // Account for controller stick deadzones
         if (mTargetMovementVector.magnitude < GameConstants.Instance.LeftStickDeadzone)
             mTargetMovementVector = Vector3.zero;
-        
+
 
         // Manage player movement state machine
         if (mGrounded)
@@ -123,6 +130,13 @@ public class PlayerController : MonoBehaviour
                 mMovementState = EMovementState.eIdle;
             else
                 mMovementState = EMovementState.eWalking;
+        }
+        else
+        {
+            if (Input.GetAxisRaw(GameConstants.Instance.ControllerBInput) > 0)
+                mMovementState = EMovementState.eGliding;
+            else
+                mMovementState = EMovementState.eFalling;
         }
 
 
@@ -153,62 +167,48 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
 
-        // Check if the player is grounded before applying movement
-        if (mGrounded)
+        switch(mMovementState)
         {
-            // Player should stand still since there is no movement input
-            if (Vector3.zero == mTargetMovementVector)
-            {
-                mMovementState = EMovementState.eIdle;
-                mRigidbody.velocity = Vector3.zero;
-            }
-            else
-            {
-                if (!mShouldRun)
+            case EMovementState.eIdle:
                 {
-                    mMovementState = EMovementState.eWalking;
+                    mRigidbody.velocity = Vector3.zero;
+                }
+                break;
 
+            case EMovementState.eWalking:
+                {
                     // Project the players target movement direction onto the surface the player is standing on
                     Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mMovementSpeed;
 
                     mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
                 }
-                else
+                break;
+
+            case EMovementState.eFalling:
                 {
-                    // Running
+                    ApplyGravity();
 
+                    // Apply sliding motion on surface normal
+                    if (mSliding)
+                    {
+                        Vector3 slidingDirection = Vector3.ProjectOnPlane(GameConstants.Instance.GravityDirection, mGroundNormal).normalized * GameConstants.Instance.GlobalGravityScale;
 
-                    //mMovementState = EMovementState.eRunning;
+                        mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, slidingDirection, 0.1f);
+                    }
 
-                    //// Project the players target movement direction onto the surface the player is standing on
-                    //Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mRunningSpeed;
-
-                    //mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+                    CharacterAirControl();
                 }
-            }
-        }
-        else
-        {
-            mMovementState = EMovementState.eFalling;
+                break;
 
-            ApplyGravity();
-            
-            // Apply sliding motion on surface normal
-            if (mSliding)
-            {
-                Vector3 slidingDirection = Vector3.ProjectOnPlane(GameConstants.Instance.GravityDirection, mGroundNormal).normalized * GameConstants.Instance.GlobalGravityScale;
+            case EMovementState.eGliding:
+                {
+                    ApplyGliderHatForce();
+                    CharacterAirControl();
+                }
+                break;
 
-                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, slidingDirection, 0.1f);
-            }
-
-            // Allow player to control character in the air
-            if (mCanControlInAir && !mSliding)
-            {
-                Vector3 movementDirection = mTargetMovementVector.normalized * mMovementSpeed;
-                movementDirection.y = mRigidbody.velocity.y;
-
-                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
-            }
+            default:
+                break;
         }
 
 
@@ -219,7 +219,7 @@ public class PlayerController : MonoBehaviour
             mRigidbody.AddForce(-GameConstants.Instance.GravityDirection * mJumpForce, ForceMode.Impulse);
         }
 
-        
+
         if (mShouldDash)
         {
             mShouldDash = false;
@@ -235,6 +235,31 @@ public class PlayerController : MonoBehaviour
 
         Vector3 gravity = GameConstants.Instance.GlobalGravityScale * mGravityScale * GameConstants.Instance.GravityDirection;
         mRigidbody.AddForce(gravity, ForceMode.Acceleration);
+
+    }
+
+
+    public void ApplyGliderHatForce()
+    {
+
+        Vector3 gliderForce = GameConstants.Instance.GlobalGravityScale * mGlidingGravityScale * GameConstants.Instance.GravityDirection;
+        //mRigidbody.AddForce(gliderForce, ForceMode.Acceleration);
+        mRigidbody.velocity = new Vector3(mRigidbody.velocity.x, gliderForce.y, mRigidbody.velocity.z); // Temporary fix (Doesnt take gravity direction into acount)
+
+    }
+
+
+    private void CharacterAirControl()
+    {
+
+        // Allow player to control character in the air
+        if (mCanControlInAir && !mSliding)
+        {
+            Vector3 movementDirection = mTargetMovementVector.normalized * mMovementSpeed;
+            movementDirection.y = mRigidbody.velocity.y;
+
+            mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+        }
 
     }
 
@@ -351,10 +376,16 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    
+
     public EMovementState GetMovementState()
     {
         return mMovementState;
+    }
+
+
+    public bool GetIsDashing()
+    {
+        return mIsDashing;
     }
 
 }

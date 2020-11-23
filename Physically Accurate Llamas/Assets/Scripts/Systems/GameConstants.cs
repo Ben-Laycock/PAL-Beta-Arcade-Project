@@ -31,6 +31,16 @@ public class GameConstants : MonoBehaviour
     }
 
 
+    [SerializeField] private bool mGamePaused = false;
+    public bool GamePaused
+    {
+        get { return mGamePaused; }
+        set { mGamePaused = value; }
+    }
+
+
+
+
     [SerializeField] private string mHorizontalInput = "Horizontal";
     public string HorizontalInput
     {
@@ -76,6 +86,14 @@ public class GameConstants : MonoBehaviour
     {
         get { return mRunInput; }
         set { mRunInput = value; }
+    }
+
+
+    [SerializeField] private string mControllerInputB = "ControllerB";
+    public string ControllerBInput
+    {
+        get { return mControllerInputB; }
+        set { mControllerInputB = value; }
     }
 
 
