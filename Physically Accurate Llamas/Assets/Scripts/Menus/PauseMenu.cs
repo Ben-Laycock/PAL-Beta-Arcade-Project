@@ -57,6 +57,9 @@ public class PauseMenu : MonoBehaviour
 
     private void Update()
     {
+
+        GameConstants.Instance.GamePaused = mGamePaused;
+
         if(prevCurrent != EventSystem.current.currentSelectedGameObject)
         {
             prevCurrent = EventSystem.current.currentSelectedGameObject;
@@ -164,6 +167,7 @@ public class PauseMenu : MonoBehaviour
             mGamePaused = !mGamePaused;
 
             CorrectMenu(mGamePaused);
+            mMenuBackground.SetActive(false);
         }
     }
 
