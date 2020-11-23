@@ -13,6 +13,7 @@ public class PauseMenu : MonoBehaviour
     [Header("Is Menu Paused")]
     [SerializeField] private bool mGamePaused = false;
     private bool mButtonDebounce = false;
+    [SerializeField] private GameObject mMenuBackground;
 
     [Header("Menu Objects")]
     [SerializeField] private float mMenuSlideSpeedModifier = 1.0f;
@@ -47,6 +48,8 @@ public class PauseMenu : MonoBehaviour
         mOptionsMenuObject.SetActive(false);
         mButtonHintKey.SetActive(false);
 
+        mMenuBackground.SetActive(false);
+
     }
 
     private GameObject prevCurrent;
@@ -54,7 +57,6 @@ public class PauseMenu : MonoBehaviour
 
     private void Update()
     {
-        
         if(prevCurrent != EventSystem.current.currentSelectedGameObject)
         {
             prevCurrent = EventSystem.current.currentSelectedGameObject;
@@ -97,6 +99,11 @@ public class PauseMenu : MonoBehaviour
                 if(!mGamePaused)
                 {
                     mButtonHintKey.SetActive(false);
+                    mMenuBackground.SetActive(false);
+                }
+                else
+                {
+                    mMenuBackground.SetActive(true);
                 }
 
             }
