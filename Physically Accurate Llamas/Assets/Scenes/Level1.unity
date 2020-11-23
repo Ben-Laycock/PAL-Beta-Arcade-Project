@@ -5357,7 +5357,7 @@ PrefabInstance:
     - target: {fileID: 7948636734579260581, guid: 55c130f808e7cf443ae432fbfca81c44,
         type: 3}
       propertyPath: m_Name
-      value: CameraAnchorPoint
+      value: CameraRotationXPivot
       objectReference: {fileID: 0}
     - target: {fileID: 7948636734579260578, guid: 55c130f808e7cf443ae432fbfca81c44,
         type: 3}
