@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &230225093
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 230225094}
+  m_Layer: 10
+  m_Name: PlayerTargetViewPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &230225094
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230225093}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6947377284900201096}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6562619965218319565
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +42,7 @@ GameObject:
   - component: {fileID: 4260711308988238577}
   - component: {fileID: 6639748876791311226}
   - component: {fileID: 2112640185670641175}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +132,7 @@ GameObject:
   - component: {fileID: 6947377283684521050}
   - component: {fileID: 6947377283684521049}
   - component: {fileID: 6947377283684521048}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Visor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,7 +215,7 @@ GameObject:
   - component: {fileID: 6947377284900201097}
   - component: {fileID: 867325508891062104}
   - component: {fileID: 363927415}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,6 +236,7 @@ Transform:
   - {fileID: 6947377283684521050}
   - {fileID: 2670843600042960845}
   - {fileID: 2319425911873689316}
+  - {fileID: 230225094}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -279,11 +310,15 @@ MonoBehaviour:
   mMaxAngleBeforeFlip: 130
   mSliding: 0
   mJumpForce: 15
-  mCameraAnchorPoint: {fileID: 0}
+  mTimeBetweenDashAttacks: 3
+  mInvertYRotation: 1
+  mYRotationMinMax: {x: -30, y: 30}
+  mCameraRotationXPivot: {fileID: 0}
+  mCameraRotationYPivot: {fileID: 0}
   mEnableAutomaticCameraAdjustment: 0
   mTimeUntilAutomaticCameraAdjustment: 2
   mCameraAutomaticAdjustmentSpeed: 2
-  mCameraRotationSensitivity: 4
+  mCameraRotationSensitivity: 40
 --- !u!114 &3610306958042745576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,8 +333,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mPickupObjectCollection:
   - {fileID: 4582507871128432115, guid: cefa410a576ed9c4a9b83d9585118624, type: 3}
-  mPickupRange: 10
-  mPickupCollectSpeed: 0.25
+  mPickupRange: 1.3
+  mPickupCollectSpeed: 0.2
   mPickupSpawnForce: 4
 --- !u!136 &6947377284900201101
 CapsuleCollider:
@@ -371,6 +406,41 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LlamaHPWIP
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -2631614678448961306, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -5959859879982882499, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097976981179541656, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -4751299070274831888, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -8468532448120962900, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -1727398277201746252, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 9c2a643080c32094aab09e0378be9df6,
         type: 3}
