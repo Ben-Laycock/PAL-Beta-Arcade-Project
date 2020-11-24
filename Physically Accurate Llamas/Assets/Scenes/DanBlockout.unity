@@ -20777,7 +20777,7 @@ PrefabInstance:
     - target: {fileID: 6478621334520506854, guid: 76b43a0849266d44d98ff30621c5dcf4,
         type: 3}
       propertyPath: m_Name
-      value: SM_GliderHat_MD
+      value: GliderHatPickup
       objectReference: {fileID: 0}
     - target: {fileID: 8049047574760020981, guid: 76b43a0849266d44d98ff30621c5dcf4,
         type: 3}
