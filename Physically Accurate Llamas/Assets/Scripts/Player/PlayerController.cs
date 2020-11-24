@@ -33,8 +33,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float mMovementSpeed = 5f;
     [SerializeField] private float mRunningSpeed = 10f;
 
-    private bool mShouldRun = false;
-
     [Tooltip("Time taken for character to get to top speed. Smaller values take longer.")]
     [SerializeField] private float mTimeToLerpToMaxSpeed = 0.1f;
 
@@ -49,11 +47,6 @@ public class PlayerController : MonoBehaviour
     private bool mShouldJump = false;
     [SerializeField] private float mJumpForce = 10f;
 
-    private bool mShouldDash = false;
-    [SerializeField] private float mTimeBetweenDashAttacks = 3f;
-    private float mTimeSincePreviousDashAttack = 0f;
-    [Tooltip("How long the dash should remain active after the keypress")]
-    [SerializeField] private float mLengthOfDash = 1f;
     private bool mIsDashing = false;
 
     private Vector3 mTargetMovementVector = Vector3.zero;
@@ -117,11 +110,6 @@ public class PlayerController : MonoBehaviour
             mRigidbody.isKinematic = false;
         }
 
-        // Update dash attack timer
-        mTimeSincePreviousDashAttack += Time.deltaTime;
-        mTimeSincePreviousDashAttack = Mathf.Clamp(mTimeSincePreviousDashAttack, 0, mTimeBetweenDashAttacks);
-        mIsDashing = mTimeSincePreviousDashAttack <= mLengthOfDash;
-
 
         //Check if the player is grounded
         mGrounded = IsPlayerGrounded();
@@ -165,8 +153,7 @@ public class PlayerController : MonoBehaviour
 
 
         // Check if the player wants to dash
-        if (Input.GetAxisRaw(GameConstants.Instance.ControllerYInput) > 0 && mMovementState == EMovementState.eWalking && mTimeSincePreviousDashAttack >= mTimeBetweenDashAttacks)
-            mShouldDash = true;
+        mIsDashing = Input.GetAxisRaw(GameConstants.Instance.ControllerYInput) > 0;
 
 
         // Camera Management
@@ -193,7 +180,12 @@ public class PlayerController : MonoBehaviour
             case EMovementState.eWalking:
                 {
                     // Project the players target movement direction onto the surface the player is standing on
-                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mMovementSpeed;
+                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized;
+
+                    if (!mIsDashing) // Is walking
+                        movementDirection *= mMovementSpeed;
+                    else
+                        movementDirection *= mRunningSpeed;
 
                     mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
                 }
@@ -232,14 +224,6 @@ public class PlayerController : MonoBehaviour
             mShouldJump = false;
             mRigidbody.velocity = new Vector3(mRigidbody.velocity.x, 0, mRigidbody.velocity.z);
             mRigidbody.AddForce(-GameConstants.Instance.GravityDirection * mJumpForce, ForceMode.Impulse);
-        }
-
-
-        if (mShouldDash)
-        {
-            mShouldDash = false;
-            mTimeSincePreviousDashAttack = 0f;
-            mRigidbody.AddForce(transform.forward * mJumpForce, ForceMode.Impulse);
         }
 
     }

@@ -276,14 +276,12 @@ MonoBehaviour:
   mMaxSlopeAngle: 45
   mCanControlInAir: 1
   mMovementSpeed: 10
-  mRunningSpeed: 20
+  mRunningSpeed: 15
   mTimeToLerpToMaxSpeed: 0.1
   mRotationLerpSpeed: 0.1
   mMaxAngleBeforeFlip: 130
   mSliding: 0
   mJumpForce: 15
-  mTimeBetweenDashAttacks: 3
-  mLengthOfDash: 0.3
   mInvertYRotation: 1
   mYRotationMinMax: {x: -30, y: 30}
   mCameraRotationXPivot: {fileID: 0}
