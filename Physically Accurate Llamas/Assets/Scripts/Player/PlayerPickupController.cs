@@ -56,7 +56,7 @@ public class PlayerPickupController : MonoBehaviour
             Transform pickupCrateTransform = otherCollider.gameObject.GetComponent<Transform>();
             PickupCrateScript pickupCrateScript = otherCollider.gameObject.GetComponent<PickupCrateScript>();
 
-            if (!pickupCrateScript.hasBeenDestroyed)
+            if (!pickupCrateScript.hasBeenDestroyed && pControllerScript.GetIsDashing())
             {
                 pickupCrateScript.hasBeenDestroyed = true;
 
@@ -107,7 +107,7 @@ public class PlayerPickupController : MonoBehaviour
             Transform llamaCageTransform = otherCollider.gameObject.transform.parent;
             LlamaCageScript llamaCageScript = llamaCageTransform.gameObject.GetComponent<LlamaCageScript>();
             
-            if (!llamaCageScript.hasBeenDestroyed)
+            if (!llamaCageScript.hasBeenDestroyed && pControllerScript.GetIsDashing())
             {
                 llamaCageScript.hasBeenDestroyed = true;
 
@@ -158,7 +158,100 @@ public class PlayerPickupController : MonoBehaviour
 
     private void OnCollisionEnter(Collision otherCollision)
     {
+        if (otherCollision.gameObject.layer == 9)
+        {
+            Transform pickupCrateTransform = otherCollision.gameObject.GetComponent<Transform>();
+            PickupCrateScript pickupCrateScript = otherCollision.gameObject.GetComponent<PickupCrateScript>();
 
+            if (!pickupCrateScript.hasBeenDestroyed && pControllerScript.GetIsDashing())
+            {
+                pickupCrateScript.hasBeenDestroyed = true;
+
+                float rotationIncrementPerPickup = 360 / pickupCrateScript.pickupAmount;
+                float tempRotationIncrement = 0;
+
+                // Get a set amount of pickup objects from the object pool here and store them in a temporary array.
+                for (int i = 0; i < pickupCrateScript.pickupAmount; i++)
+                {
+                    // Get a specific pickup from the object pool here.
+                    GameObject pickupObject = null;
+                    PickupScript pickupObjectScript = null;
+
+                    foreach (GameObject tempPickupObj in mPickupObjectCollection)
+                    {
+                        if (pickupCrateScript.pickupTypes[Random.Range(0, pickupCrateScript.pickupTypes.Length - 1)] == tempPickupObj.name)
+                        {
+                            pickupObject = PoolSystem.Instance.GetObjectFromPool(tempPickupObj, argShouldExpandPool: true, argActivateObject: true, argShouldCreateNonExistingPool: true);
+
+                            if (null == pickupObject)
+                                continue;
+
+                            pickupObjectScript = pickupObject.GetComponent<PickupScript>();
+
+                            if (null == pickupObjectScript)
+                                continue;
+                            break;
+                        }
+                        else
+                            continue;
+                    }
+
+                    Vector3 pickupForceDirection = Quaternion.Euler(0, tempRotationIncrement, 0) * Vector3.forward;
+
+                    // Apply a force towards a specific direction and rotation here.
+                    pickupObjectScript.ApplyForce(pickupCrateTransform.position + new Vector3(0, pickupCrateTransform.localScale.y / 2, 0) + pickupCrateTransform.up, pickupForceDirection.normalized, mPickupSpawnForce);
+
+                    tempRotationIncrement += rotationIncrementPerPickup;
+                }
+
+                // Break the crate model here (spawn broken crate mesh).
+                pickupCrateScript.SpawnBrokenCrate();
+            }
+        }
+
+        if (otherCollision.gameObject.layer == 12)
+        {
+            Transform llamaCageTransform = otherCollision.gameObject.transform;
+            LlamaCageScript llamaCageScript = llamaCageTransform.gameObject.GetComponent<LlamaCageScript>();
+
+            if (!llamaCageScript.hasBeenDestroyed && pControllerScript.GetIsDashing())
+            {
+                llamaCageScript.hasBeenDestroyed = true;
+                llamaCageTransform.gameObject.layer = LayerMask.NameToLayer("BrokenPickupCrate");
+
+                if (null == llamaCageTransform)
+                    return;
+
+                llamaCageScript.BreakLlamaCage();
+
+                CollectableUIClass collectable = mCollectableUIManagerScript.GetCollectableByName(llamaCageScript.pickupName);
+
+                float rotIncrementPerLlama = 360 / llamaCageScript.llamaAmount;
+                float rotIncrement = 0;
+
+                for (int i = 0; i < llamaCageScript.llamaAmount; i++)
+                {
+                    GameObject llamaObj = PoolSystem.Instance.GetObjectFromPool(llamaCageScript.llamaObject, argShouldExpandPool: true, argActivateObject: true, argShouldCreateNonExistingPool: true);
+                    llamaObj.transform.position = llamaCageTransform.position;
+
+                    if (null == llamaObj)
+                        continue;
+
+                    MiniLlamaScript llamaScript = llamaObj.GetComponent<MiniLlamaScript>();
+                    llamaObj.transform.rotation = Quaternion.Euler(0, rotIncrement, 0);
+
+                    Rigidbody llamaRb = llamaObj.GetComponent<Rigidbody>();
+                    llamaRb.isKinematic = false;
+
+                    llamaRb.AddForce((llamaObj.transform.forward + llamaObj.transform.up) * 3, UnityEngine.ForceMode.Impulse);
+                    llamaScript.hasSpawned = true;
+
+                    collectable.IncreaseCollectableQuantity();
+
+                    rotIncrement += rotIncrementPerLlama;
+                }
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -206,4 +299,20 @@ public class PlayerPickupController : MonoBehaviour
     {
         
     }
+
+    /*void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        if (null == obj)
+            return;
+
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            if (null == child)
+                continue;
+
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
+    }*/
 }
