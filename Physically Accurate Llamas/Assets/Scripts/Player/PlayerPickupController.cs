@@ -7,6 +7,9 @@ public class PlayerPickupController : MonoBehaviour
     private Transform mPlayerTransform;
     private List<GameObject> mPickupGameObjects;
 
+    [Tooltip("Player controller script.")]
+    [SerializeField] PlayerController pControllerScript = null;
+
     [Tooltip("Pickup collection list, add a pickup prefab here.")]
     [SerializeField] GameObject[] mPickupObjectCollection = { };
 
@@ -46,15 +49,12 @@ public class PlayerPickupController : MonoBehaviour
                 mPickupGameObjects.Add(otherCollider.gameObject);
                 pickupParticleSystem.Play();
             }
-        } 
-    }
+        }
 
-    private void OnCollisionEnter(Collision otherCollision)
-    {
-        if (otherCollision.gameObject.layer == 9)
+        if (otherCollider.gameObject.layer == 9)
         {
-            Transform pickupCrateTransform = otherCollision.gameObject.GetComponent<Transform>();
-            PickupCrateScript pickupCrateScript = otherCollision.gameObject.GetComponent<PickupCrateScript>();
+            Transform pickupCrateTransform = otherCollider.gameObject.GetComponent<Transform>();
+            PickupCrateScript pickupCrateScript = otherCollider.gameObject.GetComponent<PickupCrateScript>();
 
             if (!pickupCrateScript.hasBeenDestroyed)
             {
@@ -71,10 +71,11 @@ public class PlayerPickupController : MonoBehaviour
                     PickupScript pickupObjectScript = null;
 
                     foreach (GameObject tempPickupObj in mPickupObjectCollection)
-                    { 
-                        if (pickupCrateScript.pickupTypes[Random.Range(0, pickupCrateScript.pickupTypes.Length - 1)] == tempPickupObj.name) {
+                    {
+                        if (pickupCrateScript.pickupTypes[Random.Range(0, pickupCrateScript.pickupTypes.Length - 1)] == tempPickupObj.name)
+                        {
                             pickupObject = PoolSystem.Instance.GetObjectFromPool(tempPickupObj, argShouldExpandPool: true, argActivateObject: true, argShouldCreateNonExistingPool: true);
-                            
+
                             if (null == pickupObject)
                                 continue;
 
@@ -100,6 +101,64 @@ public class PlayerPickupController : MonoBehaviour
                 pickupCrateScript.SpawnBrokenCrate();
             }
         }
+
+        if (otherCollider.gameObject.layer == 12)
+        {
+            Transform llamaCageTransform = otherCollider.gameObject.transform.parent;
+            LlamaCageScript llamaCageScript = llamaCageTransform.gameObject.GetComponent<LlamaCageScript>();
+            
+            if (!llamaCageScript.hasBeenDestroyed)
+            {
+                llamaCageScript.hasBeenDestroyed = true;
+
+                if (null == llamaCageTransform)
+                    return;
+
+                foreach (Transform childT in llamaCageTransform.transform)
+                {
+                    Rigidbody rBody = childT.gameObject.GetComponent<Rigidbody>();
+                    BoxCollider bCollider = childT.gameObject.GetComponent<BoxCollider>();
+
+                    bCollider.isTrigger = false;
+                    rBody.isKinematic = false;
+
+                    Vector3 argDirection = (childT.up * 1.25f) + childT.forward + childT.right;
+                    rBody.AddForce(argDirection * 2, UnityEngine.ForceMode.Impulse);
+                }
+
+                CollectableUIClass collectable = mCollectableUIManagerScript.GetCollectableByName(llamaCageScript.pickupName);
+
+                float rotIncrementPerLlama = 360 / llamaCageScript.llamaAmount;
+                float rotIncrement = 0;
+
+                for (int i = 0; i < llamaCageScript.llamaAmount; i++)
+                {
+                    GameObject llamaObj = PoolSystem.Instance.GetObjectFromPool(llamaCageScript.llamaObject, argShouldExpandPool: true, argActivateObject: true, argShouldCreateNonExistingPool: true);
+                    llamaObj.transform.position = llamaCageTransform.position;
+
+                    if (null == llamaObj)
+                        continue;
+
+                    MiniLlamaScript llamaScript = llamaObj.GetComponent<MiniLlamaScript>();
+                    llamaObj.transform.rotation = Quaternion.Euler(0, rotIncrement, 0);
+
+                    Rigidbody llamaRb = llamaObj.GetComponent<Rigidbody>();
+                    llamaRb.isKinematic = false;
+
+                    llamaRb.AddForce((llamaObj.transform.forward + llamaObj.transform.up) * 3, UnityEngine.ForceMode.Impulse);
+                    llamaScript.hasSpawned = true;
+
+                    collectable.IncreaseCollectableQuantity();
+
+                    rotIncrement += rotIncrementPerLlama;
+                }
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision otherCollision)
+    {
+
     }
 
     private void FixedUpdate()

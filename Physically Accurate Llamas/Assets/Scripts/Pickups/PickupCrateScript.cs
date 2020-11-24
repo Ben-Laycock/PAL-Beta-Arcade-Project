@@ -54,6 +54,16 @@ public class PickupCrateScript : MonoBehaviour
 
         Destroy(this.gameObject);
         tempBrokenCrateTransform.position = cratePosition;
-        Instantiate(tempBrokenCrate);
+
+        foreach (Transform childT in tempBrokenCrate.transform)
+        {
+            Rigidbody rBody = childT.gameObject.GetComponent<Rigidbody>();
+            BoxCollider bCollider = childT.gameObject.GetComponent<BoxCollider>();
+
+            rBody.isKinematic = false;
+
+            Vector3 argDirection = (childT.up * 1.5f) + childT.forward + childT.right;
+            rBody.AddForce(argDirection * 2, UnityEngine.ForceMode.Impulse);
+        }
     }
 }
