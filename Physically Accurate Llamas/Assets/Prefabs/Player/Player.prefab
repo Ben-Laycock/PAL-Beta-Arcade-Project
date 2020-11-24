@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4260711308988238577}
   - component: {fileID: 6639748876791311226}
   - component: {fileID: 2112640185670641175}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 6947377283684521050}
   - component: {fileID: 6947377283684521049}
   - component: {fileID: 6947377283684521048}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Visor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 867325508891062104}
   - component: {fileID: 363927415}
   - component: {fileID: 8800768038402295460}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13abc2cf0141114a88056b5deeabdd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pControllerScript: {fileID: 0}
+  pControllerScript: {fileID: 6947377284900201094}
   mPickupObjectCollection:
   - {fileID: 4582507871128432115, guid: cefa410a576ed9c4a9b83d9585118624, type: 3}
   mPickupRange: 1.3
@@ -394,6 +394,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_GliderHat_MD
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bca2dbe8e42f2e54993fb825139ee7b5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: -7030357142099283172, guid: bca2dbe8e42f2e54993fb825139ee7b5,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -454,6 +459,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -507514606833156699, guid: bca2dbe8e42f2e54993fb825139ee7b5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bca2dbe8e42f2e54993fb825139ee7b5, type: 3}
 --- !u!4 &5006512736213370627 stripped
@@ -473,6 +483,41 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LlamaHPWIP
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -2631614678448961306, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -5959859879982882499, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097976981179541656, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -4751299070274831888, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -8468532448120962900, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -1727398277201746252, guid: 9c2a643080c32094aab09e0378be9df6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 9c2a643080c32094aab09e0378be9df6,
         type: 3}
