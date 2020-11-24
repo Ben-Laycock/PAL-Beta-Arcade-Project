@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class LlamaCageScript : MonoBehaviour
 {
+    [Tooltip("Broken llama cage prefab, shouldn't need to be changed.")]
+    [SerializeField] private GameObject mBrokenLlamaCage = null;
+
     [Tooltip("Mini llama game object goes here, shouldn't need to be changed.")]
     [SerializeField] private GameObject mLlamaObject = null;
     public GameObject llamaObject
@@ -42,5 +45,31 @@ public class LlamaCageScript : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void BreakLlamaCage()
+    {
+        GameObject brokenLlamaCage = PoolSystem.Instance.GetObjectFromPool(mBrokenLlamaCage, argActivateObject: true, argShouldCreateNonExistingPool: true, argShouldExpandPool: true);
+        Transform tempBrokenLlamaCageTransform = brokenLlamaCage.GetComponent<Transform>();
+
+        if (null == tempBrokenLlamaCageTransform)
+            return;
+
+        Vector3 cagePosition = this.gameObject.transform.position;
+
+        Destroy(this.gameObject);
+        tempBrokenLlamaCageTransform.position = cagePosition;
+
+        foreach (Transform childT in brokenLlamaCage.transform)
+        {
+            Rigidbody rBody = childT.gameObject.GetComponent<Rigidbody>();
+            BoxCollider bCollider = childT.gameObject.GetComponent<BoxCollider>();
+
+            bCollider.isTrigger = false;
+            rBody.isKinematic = false;
+
+            Vector3 argDirection = (childT.up * 1.25f) + childT.forward + childT.right;
+            rBody.AddForce(argDirection * 2, UnityEngine.ForceMode.Impulse);
+        }
     }
 }
