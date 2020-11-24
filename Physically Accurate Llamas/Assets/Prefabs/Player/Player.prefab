@@ -307,8 +307,8 @@ MonoBehaviour:
   pControllerScript: {fileID: 6947377284900201094}
   mPickupObjectCollection:
   - {fileID: 4582507871128432115, guid: cefa410a576ed9c4a9b83d9585118624, type: 3}
-  mPickupRange: 1.3
-  mPickupCollectSpeed: 0.2
+  mPickupRange: 1.75
+  mPickupCollectSpeed: 0.3
   mPickupSpawnForce: 4
 --- !u!136 &6947377284900201101
 CapsuleCollider:

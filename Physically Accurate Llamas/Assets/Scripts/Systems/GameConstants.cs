@@ -96,6 +96,13 @@ public class GameConstants : MonoBehaviour
         set { mControllerInputB = value; }
     }
 
+    [SerializeField] private string mControllerInputY = "ControllerY";
+    public string ControllerYInput
+    {
+        get { return mControllerInputY; }
+        set { mControllerInputY = value; }
+    }
+
 
     [SerializeField] private float mControllerLeftStickDeadzone = 0.025f;
     public float LeftStickDeadzone

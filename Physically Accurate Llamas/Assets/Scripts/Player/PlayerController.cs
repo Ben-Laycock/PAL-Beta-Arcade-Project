@@ -165,7 +165,7 @@ public class PlayerController : MonoBehaviour
 
 
         // Check if the player wants to dash
-        if (Input.GetKeyDown(KeyCode.M) && mMovementState == EMovementState.eWalking && mTimeSincePreviousDashAttack >= mTimeBetweenDashAttacks)
+        if (Input.GetAxisRaw(GameConstants.Instance.ControllerYInput) > 0 && mMovementState == EMovementState.eWalking && mTimeSincePreviousDashAttack >= mTimeBetweenDashAttacks)
             mShouldDash = true;
 
 
