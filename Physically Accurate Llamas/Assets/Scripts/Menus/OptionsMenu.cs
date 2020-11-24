@@ -90,7 +90,7 @@ public class OptionsMenu : MonoBehaviour
         mAudioToggleButtonScript.SetToggleState(mAudioEnabled);
         mVSyncToggleButtonScript.SetToggleState(mVSync);
 
-        Debug.Log(mAudioEnabled + "   " + mVSync);
+        //Debug.Log(mAudioEnabled + "   " + mVSync);
 
         //Getting the Slider Script Component from the Slider Object
         mAudioSliderScript = mAudioSliderObject.GetComponent<Slider>();

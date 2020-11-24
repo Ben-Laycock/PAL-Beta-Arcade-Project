@@ -94,19 +94,26 @@ public class MainMenuManager : MonoBehaviour
         if (prevCurrent != EventSystem.current.currentSelectedGameObject)
         {
             prevCurrent = EventSystem.current.currentSelectedGameObject;
-            Debug.Log(EventSystem.current.currentSelectedGameObject);
+            //Debug.Log(EventSystem.current.currentSelectedGameObject);
             //Debug.Log(EventSystem.current.GetComponent<RectTransform>().anchoredPosition3D);
-            RectTransform EventSystemObject = EventSystem.current.currentSelectedGameObject.GetComponent<RectTransform>();
-            RectTransform ButtonHitTransform = mButtonHintKey.GetComponent<RectTransform>();
-            ButtonHitTransform.sizeDelta = new Vector2(EventSystemObject.sizeDelta.y, EventSystemObject.sizeDelta.y);
-            ButtonHitTransform.anchoredPosition3D = EventSystemObject.anchoredPosition3D + new Vector3((EventSystemObject.sizeDelta.x / 2) + (ButtonHitTransform.sizeDelta.x / 2) + 5, 0, 0);
-            if (EventSystem.current.currentSelectedGameObject.name == "VolumeSlider")
+
+            if (EventSystem.current.currentSelectedGameObject)
             {
-                mButtonHintKey.SetActive(false);
-            }
-            else
-            {
-                mButtonHintKey.SetActive(true);
+                RectTransform EventSystemObject = EventSystem.current.currentSelectedGameObject.GetComponent<RectTransform>();
+                RectTransform ButtonHitTransform = mButtonHintKey.GetComponent<RectTransform>();
+                ButtonHitTransform.sizeDelta = new Vector2(EventSystemObject.sizeDelta.y, EventSystemObject.sizeDelta.y);
+                ButtonHitTransform.anchoredPosition3D = EventSystemObject.anchoredPosition3D + new Vector3((EventSystemObject.sizeDelta.x / 2) + (ButtonHitTransform.sizeDelta.x / 2) + 5, 0, 0);
+                
+                if (EventSystem.current.currentSelectedGameObject.name == "VolumeSlider" || EventSystem.current.currentSelectedGameObject.name.Contains("Item"))
+                {
+                    mButtonHintKey.SetActive(false);
+
+                    CheckScrollBarPosition(EventSystem.current.currentSelectedGameObject);
+                }
+                else
+                {
+                    mButtonHintKey.SetActive(true);
+                }
             }
         }
 
@@ -125,6 +132,46 @@ public class MainMenuManager : MonoBehaviour
 
         }
 
+    }
+
+    private void CheckScrollBarPosition(GameObject objectToCheck)
+    {
+        if (objectToCheck.name.Contains("Item"))
+        {
+            GameObject dropdown = objectToCheck.transform.parent.parent.parent.parent.gameObject;
+
+            if (dropdown.name == "ResolutionDropdown")
+            {
+                char one = objectToCheck.name[5];
+                char two = objectToCheck.name[6];
+
+                string numberToParse = "";
+
+                int valueToUse = 0;
+
+                if (two == ':')
+                {
+                    numberToParse = numberToParse + one;
+                    valueToUse = int.Parse(numberToParse);
+                }
+                else
+                {
+                    numberToParse = numberToParse + one;
+                    numberToParse = numberToParse + two;
+                    valueToUse = int.Parse(numberToParse);
+                }
+
+                float newValue = 1 - ((valueToUse + 1) / 18.0f);
+
+                if (valueToUse == 0)
+                {
+                    newValue = 1;
+                }
+
+                //print("In Resolution Dropdown " + newValue.ToString() + "    " + valueToUse);
+                objectToCheck.transform.parent.parent.parent.Find("Scrollbar").gameObject.GetComponent<Scrollbar>().value = newValue;
+            }
+        }
     }
 
 }
