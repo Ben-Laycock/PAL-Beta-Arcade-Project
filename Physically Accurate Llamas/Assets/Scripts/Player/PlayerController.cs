@@ -106,6 +106,17 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
+        // Temporary way to stop player when game is paused
+        if (GameConstants.Instance.GamePaused)
+        {
+            mRigidbody.isKinematic = true;
+            return;
+        }
+        else
+        {
+            mRigidbody.isKinematic = false;
+        }
+
         // Update dash attack timer
         mTimeSincePreviousDashAttack += Time.deltaTime;
         mTimeSincePreviousDashAttack = Mathf.Clamp(mTimeSincePreviousDashAttack, 0, mTimeBetweenDashAttacks);
@@ -166,6 +177,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        // Temporary way to stop player when game is paused
+        if (GameConstants.Instance.GamePaused)
+            return;
 
         switch(mMovementState)
         {
