@@ -126,6 +126,7 @@ MonoBehaviour:
   mPauseFirstButton: {fileID: 4421068181534024003}
   mOptionsFirstButton: {fileID: 4421068181754627562}
   mOptionsClosedButton: {fileID: 4421068182079945684}
+  mGameOverFirstButton: {fileID: 0}
   mButtonHintKey: {fileID: 4421068181747071146}
   mGamePaused: 0
   mMenuBackground: {fileID: 2638260962010150722}

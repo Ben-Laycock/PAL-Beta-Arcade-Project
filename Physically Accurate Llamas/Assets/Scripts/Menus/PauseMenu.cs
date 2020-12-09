@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour
 {
     
-    [SerializeField] private GameObject mPauseFirstButton, mOptionsFirstButton, mOptionsClosedButton;
+    [SerializeField] private GameObject mPauseFirstButton, mOptionsFirstButton, mOptionsClosedButton, mGameOverFirstButton;
     [SerializeField] private GameObject mButtonHintKey;
     
     [Header("Is Menu Paused")]
@@ -209,6 +209,17 @@ public class PauseMenu : MonoBehaviour
             mSwitchToOptionsMenu = true;
         }
 
+    }
+
+    public void SwitchToGameOverScreen()
+    {
+
+        mGamePaused = true;
+
+        mGameOverFirstButton.transform.parent.parent.Find("GameOverManager").gameObject.GetComponent<GameOverMenu>().ToggleGameOverOn();
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(mGameOverFirstButton);
     }
 
     public void OnResumeButtonPressed()
