@@ -35,6 +35,8 @@ public class LlamaCageScript : MonoBehaviour
         get { return mHasBeenDestroyed; }
     }
 
+    private float destroyedFadeTimer = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,9 +44,13 @@ public class LlamaCageScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        if (mHasBeenDestroyed)
+        {
+            print(destroyedFadeTimer);
+            destroyedFadeTimer += Time.fixedDeltaTime;
+        }
     }
 
     public void BreakLlamaCage()
@@ -63,13 +69,25 @@ public class LlamaCageScript : MonoBehaviour
         foreach (Transform childT in brokenLlamaCage.transform)
         {
             Rigidbody rBody = childT.gameObject.GetComponent<Rigidbody>();
-            BoxCollider bCollider = childT.gameObject.GetComponent<BoxCollider>();
+            MeshCollider mCollider = childT.gameObject.GetComponent<MeshCollider>();
 
-            bCollider.isTrigger = false;
-            rBody.isKinematic = false;
+            mCollider.isTrigger = false;
 
-            Vector3 argDirection = (childT.up * 1.25f) + childT.forward + childT.right;
-            rBody.AddForce(argDirection * 2, UnityEngine.ForceMode.Impulse);
+            Vector3 argDirection = Vector3.zero;
+
+            childT.Translate(childT.forward, Space.World);
+
+            if (childT.gameObject.name == "Bar")
+            {
+                rBody.isKinematic = false;
+                childT.rotation = childT.rotation * Quaternion.Euler(20, 0, 0);
+            }
+            else if (childT.gameObject.name == "Top")
+            {
+                rBody.isKinematic = false;
+                argDirection = childT.up * 3;
+                rBody.AddForce(argDirection, UnityEngine.ForceMode.Impulse);
+            }
         }
     }
 }

@@ -46,12 +46,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a453af615357384899de8dbaf385856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mGamePaused: 0
   mHorizontalInput: Horizontal
   mVerticalInput: Vertical
   mJumpInput: Jump
   mHorizontalLookInput: HorizontalLook
   mVerticalLookInput: VerticalLook
   mRunInput: Run
+  mControllerInputB: ControllerB
+  mControllerInputY: ControllerY
   mControllerLeftStickDeadzone: 0.025
   mControllerRightStickDeadzone: 0.025
   mGravityDirection: {x: 0, y: -1, z: 0}
@@ -106,3 +109,13 @@ MonoBehaviour:
     mClip: {fileID: 8300000, guid: 690b168bd8815394795aaf6664e75c61, type: 3}
   - mName: SliderClick
     mClip: {fileID: 8300000, guid: b3425480778e7604b87e6c467586cd09, type: 3}
+  - mName: BreakCage
+    mClip: {fileID: 8300000, guid: d238b1dd4bb20544283d79c593a09cb7, type: 3}
+  - mName: BreakCrate
+    mClip: {fileID: 8300000, guid: a567b62a1c7a470478a0fb7a25348114, type: 3}
+  - mName: Footstep
+    mClip: {fileID: 8300000, guid: 69a6393195b4ddd44a9ad2f92058f97c, type: 3}
+  - mName: Jump
+    mClip: {fileID: 8300000, guid: c85eb9eeabaa75c418bff67966e7bcbc, type: 3}
+  - mName: Level1Music
+    mClip: {fileID: 8300000, guid: bef360cf422649241b7e8550507b9c40, type: 3}
