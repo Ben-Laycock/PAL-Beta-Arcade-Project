@@ -112,6 +112,7 @@ public class AudioSystem : MonoBehaviour
 
             audioObject.SetActive(true);
             audioSource.Play();
+
             deactivationCompononent.ActivateTimer();
         }
 

@@ -66,6 +66,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector2 mYRotationMinMax = new Vector2(-15.0f, 30.0f);
     [SerializeField] private GameObject mCameraRotationXPivot = null;
     [SerializeField] private GameObject mCameraRotationYPivot = null;
+    [SerializeField] private GameObject mCamera = null;
+    [SerializeField] private LayerMask mCameraPosLayerMaks = new LayerMask();
+    [SerializeField] private float mCameraMaxDistance = 5f;
+    [SerializeField] private float mOcclusionAvoidanceDistance = 0.3f;
 
     [SerializeField] private bool mEnableAutomaticCameraAdjustment = false;
     private bool mShouldAutoAdjustCamera = false;
@@ -91,6 +95,7 @@ public class PlayerController : MonoBehaviour
         // Find the camera pivot points in the scene
         mCameraRotationXPivot = GameObject.Find("CameraRotationXPivot");
         mCameraRotationYPivot = GameObject.Find("CameraRotationYPivot");
+        mCamera = GameObject.Find("Main Camera");
 
     }
 
@@ -312,6 +317,7 @@ public class PlayerController : MonoBehaviour
         mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
 
         // Move camera anchor point to current player position
+        //mCameraRotationXPivot.transform.position = Vector3.Lerp(mCameraRotationXPivot.transform.position, transform.position, 1f);
         mCameraRotationXPivot.transform.position = transform.position;
 
         // Get the camera rotation values from player input
@@ -338,18 +344,41 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            mCameraRotationXPivot.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
+            mCameraRotationXPivot.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity * Time.deltaTime, 0);
         }
 
 
         // Y Pivot
-        mYRotation += cameraRotationInput.y * mCameraRotationSensitivity;
+        mYRotation += cameraRotationInput.y * mCameraRotationSensitivity * Time.deltaTime;
         mYRotation = Mathf.Clamp(mYRotation, mYRotationMinMax.x, mYRotationMinMax.y);
 
         if (!mInvertYRotation)
             mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(mYRotation, 0, 0);
         else
             mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(-mYRotation, 0, 0);
+
+        // Adjust camera position
+        RaycastHit hit;
+        if (Physics.Raycast(mCameraRotationYPivot.transform.position, -mCameraRotationYPivot.transform.forward, out hit, Mathf.Infinity, mCameraPosLayerMaks))
+        {
+            if (hit.transform == null)
+            {
+                mCamera.transform.position = mCameraRotationYPivot.transform.position - mCameraRotationYPivot.transform.forward * mCameraMaxDistance;
+            }
+            else
+            {
+                float distToOccludingObject = Vector3.Distance(mCameraRotationYPivot.transform.position, hit.point);
+                if (distToOccludingObject > mCameraMaxDistance)
+                    mCamera.transform.position = mCameraRotationYPivot.transform.position - mCameraRotationYPivot.transform.forward * mCameraMaxDistance;
+                else
+                    mCamera.transform.position = mCameraRotationYPivot.transform.position - mCameraRotationYPivot.transform.forward * (distToOccludingObject- mOcclusionAvoidanceDistance);
+            }
+
+        }
+        else
+        {
+            mCamera.transform.position = mCameraRotationYPivot.transform.position - mCameraRotationYPivot.transform.forward * mCameraMaxDistance;
+        }
 
     }
 

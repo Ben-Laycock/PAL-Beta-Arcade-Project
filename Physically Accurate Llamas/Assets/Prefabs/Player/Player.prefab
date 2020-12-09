@@ -286,10 +286,16 @@ MonoBehaviour:
   mYRotationMinMax: {x: -30, y: 30}
   mCameraRotationXPivot: {fileID: 0}
   mCameraRotationYPivot: {fileID: 0}
+  mCamera: {fileID: 0}
+  mCameraPosLayerMaks:
+    serializedVersion: 2
+    m_Bits: 1
+  mCameraMaxDistance: 5
+  mOcclusionAvoidanceDistance: 0.3
   mEnableAutomaticCameraAdjustment: 0
   mTimeUntilAutomaticCameraAdjustment: 2
   mCameraAutomaticAdjustmentSpeed: 2
-  mCameraRotationSensitivity: 50
+  mCameraRotationSensitivity: 1000
 --- !u!114 &3610306958042745576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,11 +403,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: -7030357142099283172, guid: bca2dbe8e42f2e54993fb825139ee7b5,
+    - target: {fileID: -507514606833156699, guid: bca2dbe8e42f2e54993fb825139ee7b5,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 6ccf6544432a81445a88de0e3862c590, type: 2}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: bca2dbe8e42f2e54993fb825139ee7b5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -457,11 +463,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -507514606833156699, guid: bca2dbe8e42f2e54993fb825139ee7b5,
+    - target: {fileID: -7030357142099283172, guid: bca2dbe8e42f2e54993fb825139ee7b5,
         type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6ccf6544432a81445a88de0e3862c590, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bca2dbe8e42f2e54993fb825139ee7b5, type: 3}
 --- !u!4 &5006512736213370627 stripped
