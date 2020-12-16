@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class OptionsMenu : MonoBehaviour
 {
@@ -51,8 +52,12 @@ public class OptionsMenu : MonoBehaviour
     [SerializeField] private GameObject mAudioPercentageTextObject = null;
     private Text mAudioPercentageTextScript = null;
 
-    [Header("Revert Button")]
+    [Header("Revert Apply Button")]
     [SerializeField] private GameObject mRevertButtonObject = null;
+    [SerializeField] private GameObject mApplyButtonObject = null;
+
+    [Header("OtherMenuTag")]
+    [SerializeField] private string mOtherMenuString = "";
 
     private void Start()
     {
@@ -85,7 +90,7 @@ public class OptionsMenu : MonoBehaviour
         mAudioToggleButtonScript.SetToggleState(mAudioEnabled);
         mVSyncToggleButtonScript.SetToggleState(mVSync);
 
-        Debug.Log(mAudioEnabled + "   " + mVSync);
+        //Debug.Log(mAudioEnabled + "   " + mVSync);
 
         //Getting the Slider Script Component from the Slider Object
         mAudioSliderScript = mAudioSliderObject.GetComponent<Slider>();
@@ -126,6 +131,12 @@ public class OptionsMenu : MonoBehaviour
 
         if (!mSwitchToMainMenu)
         {
+            if(mOtherMenuString == "MainMenu")
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+                EventSystem.current.SetSelectedGameObject(gameObject.GetComponent<MainMenuManager>().GetOptionsClosedButton());
+            }
+
             mMenuMoveTimer = 0.0f;
             mSwitchToMainMenu = true;
         }
@@ -275,6 +286,9 @@ public class OptionsMenu : MonoBehaviour
 
         Screen.SetResolution(int.Parse(xyRedArray[0]), int.Parse(xyRedArray[1]), mode, refreshRate);
 
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(mApplyButtonObject);
 
         mRevertButtonObject.SetActive(false);
 

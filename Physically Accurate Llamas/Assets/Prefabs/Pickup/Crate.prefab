@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f87c933debf6dad41b440a5da39ddac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mPickupType: Coins
+  mPickupTypes: []
   mPickupAmount: 4
   mBrokenCrate: {fileID: 6324454593744291116, guid: 6ed3e7f32ccbba54f8aeacd2c912e9bc,
     type: 3}

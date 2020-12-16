@@ -9,14 +9,18 @@ public class PlayerController : MonoBehaviour
     {
         eIdle,
         eWalking,
-        eRunning,
-        eFalling
+        eFalling,
+        eGliding
     }
 
 
     private Rigidbody mRigidbody = null;
 
     [SerializeField] private float mGravityScale = 1f;
+
+
+    [SerializeField] private float mGlidingGravityScale = 0.25f;
+
 
     [SerializeField] private LayerMask mGroundLayerMaskCheck = new LayerMask();
     private bool mGrounded = false;
@@ -28,8 +32,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float mMovementSpeed = 5f;
     [SerializeField] private float mRunningSpeed = 10f;
-
-    private bool mShouldRun = false;
 
     [Tooltip("Time taken for character to get to top speed. Smaller values take longer.")]
     [SerializeField] private float mTimeToLerpToMaxSpeed = 0.1f;
@@ -45,18 +47,25 @@ public class PlayerController : MonoBehaviour
     private bool mShouldJump = false;
     [SerializeField] private float mJumpForce = 10f;
 
+    private bool mIsDashing = false;
+
     private Vector3 mTargetMovementVector = Vector3.zero;
 
     private EMovementState mMovementState = EMovementState.eIdle;
 
 
-    [Space][Space][Space]
+    [Space]
+    [Space]
+    [Space]
 
 
     /*
      * Camera Variables
      */
-    [SerializeField] private GameObject mCameraAnchorPoint = null;
+    [SerializeField] private bool mInvertYRotation = false;
+    [SerializeField] private Vector2 mYRotationMinMax = new Vector2(-15.0f, 30.0f);
+    [SerializeField] private GameObject mCameraRotationXPivot = null;
+    [SerializeField] private GameObject mCameraRotationYPivot = null;
 
     [SerializeField] private bool mEnableAutomaticCameraAdjustment = false;
     private bool mShouldAutoAdjustCamera = false;
@@ -65,6 +74,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float mCameraAutomaticAdjustmentSpeed = 2f;
 
     [SerializeField] private float mCameraRotationSensitivity = 50f;
+
+    float mYRotation = 0f;
 
 
     void Start()
@@ -76,39 +87,64 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
 
-        mCameraAnchorPoint = GameObject.Find("CameraAnchorPoint");
+
+        // Find the camera pivot points in the scene
+        mCameraRotationXPivot = GameObject.Find("CameraRotationXPivot");
+        mCameraRotationYPivot = GameObject.Find("CameraRotationYPivot");
 
     }
 
-    
+
 
     void Update()
     {
 
-        //Check if the player is grounded (Store value in mGrounded for use in FixedUpdate)
+        // Temporary way to stop player when game is paused
+        if (GameConstants.Instance.GamePaused)
+        {
+            mRigidbody.isKinematic = true;
+            return;
+        }
+        else
+        {
+            mRigidbody.isKinematic = false;
+        }
+
+
+        //Check if the player is grounded
         mGrounded = IsPlayerGrounded();
 
         // Get the players target movement direction
         mTargetMovementVector = GetPlayerTargetMovementVector();
 
-        // Set the target movement vector to none if it is less than the specified deadzone value
+        // Account for controller stick deadzones
         if (mTargetMovementVector.magnitude < GameConstants.Instance.LeftStickDeadzone)
             mTargetMovementVector = Vector3.zero;
 
-        mShouldRun = Input.GetAxisRaw(GameConstants.Instance.RunInput) > 0;
 
-
-
-        // Rotate player character towards target movement direction / flip player to face target movement direction
-        if (Vector3.Angle(mTargetMovementVector, transform.forward) <= mMaxAngleBeforeFlip)
-            transform.forward = Vector3.Lerp(transform.forward, mTargetMovementVector, mRotationLerpSpeed);
+        // Manage player movement state machine
+        if (mGrounded)
+        {
+            if (Vector3.zero == mTargetMovementVector)
+                mMovementState = EMovementState.eIdle;
+            else
+                mMovementState = EMovementState.eWalking;
+        }
         else
         {
-            transform.forward = mTargetMovementVector;
-            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+            if (Input.GetAxisRaw(GameConstants.Instance.ControllerBInput) > 0)
+                mMovementState = EMovementState.eGliding;
+            else
+                mMovementState = EMovementState.eFalling;
         }
 
 
+
+        //mShouldRun = Input.GetAxisRaw(GameConstants.Instance.RunInput) > 0;
+
+
+        // Rotate player character towards target movement direction / flip player to face target movement direction
+        RotatePlayerCharacter();
 
 
         // Check if player wants to jump (Make sure player is grounded first)
@@ -116,50 +152,12 @@ public class PlayerController : MonoBehaviour
             mShouldJump = true;
 
 
+        // Check if the player wants to dash
+        mIsDashing = Input.GetAxisRaw(GameConstants.Instance.ControllerYInput) > 0;
 
 
-        /*
-         * Camera Management
-         */
+        // Camera Management
         ManageCamera();
-
-    }
-
-
-    public void ManageCamera()
-    {
-
-        mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
-
-        // Move camera anchor point to current player position
-        mCameraAnchorPoint.transform.position = transform.position;
-
-        // Get the camera rotation values from player input
-        Vector2 cameraRotationInput = new Vector2(Input.GetAxisRaw(GameConstants.Instance.HorizontalLookInput), Input.GetAxisRaw(GameConstants.Instance.VerticalLookInput));
-
-        // Set input to none if it is less that the specified deadzone value
-        if (cameraRotationInput.magnitude < GameConstants.Instance.RightStickDeadzone)
-        {
-            cameraRotationInput = Vector2.zero;
-        }
-        else
-        {
-            // Camera input detected
-            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
-        }
-
-        mShouldAutoAdjustCamera = (mTimeUntilStartOfAutomaticAdjustment <= 0.0f);
-
-        // Apply the camera rotation on the X axis
-        if (mEnableAutomaticCameraAdjustment && mShouldAutoAdjustCamera)
-        {
-            // Automatically adjust camera to player direction
-            mCameraAnchorPoint.transform.forward = Vector3.Lerp(mCameraAnchorPoint.transform.forward, transform.forward, mCameraAutomaticAdjustmentSpeed);
-        }
-        else
-        {
-            mCameraAnchorPoint.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
-        }
 
     }
 
@@ -167,60 +165,57 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
 
-        // Check if the player is grounded before applying movement
-        if (mGrounded)
-        {
-            // Player should stand still since there is no movement input
-            if (Vector3.zero == mTargetMovementVector)
-            {
-                mMovementState = EMovementState.eIdle;
-                mRigidbody.velocity = Vector3.zero;
-            }
-            else
-            {
-                if (!mShouldRun)
-                {
-                    mMovementState = EMovementState.eWalking;
+        // Temporary way to stop player when game is paused
+        if (GameConstants.Instance.GamePaused)
+            return;
 
+        switch(mMovementState)
+        {
+            case EMovementState.eIdle:
+                {
+                    mRigidbody.velocity = Vector3.zero;
+                }
+                break;
+
+            case EMovementState.eWalking:
+                {
                     // Project the players target movement direction onto the surface the player is standing on
-                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mMovementSpeed;
+                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized;
+
+                    if (!mIsDashing) // Is walking
+                        movementDirection *= mMovementSpeed;
+                    else
+                        movementDirection *= mRunningSpeed;
 
                     mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
                 }
-                else
+                break;
+
+            case EMovementState.eFalling:
                 {
-                    print("Running");
-                    mMovementState = EMovementState.eRunning;
+                    ApplyGravity();
 
-                    // Project the players target movement direction onto the surface the player is standing on
-                    Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized * mRunningSpeed;
+                    // Apply sliding motion on surface normal
+                    if (mSliding)
+                    {
+                        Vector3 slidingDirection = Vector3.ProjectOnPlane(GameConstants.Instance.GravityDirection, mGroundNormal).normalized * GameConstants.Instance.GlobalGravityScale;
 
-                    mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+                        mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, slidingDirection, 0.1f);
+                    }
+
+                    CharacterAirControl();
                 }
-            }
-        }
-        else
-        {
-            mMovementState = EMovementState.eFalling;
+                break;
 
-            ApplyGravity();
-            
-            // Apply sliding motion on surface normal
-            if (mSliding)
-            {
-                Vector3 slidingDirection = Vector3.ProjectOnPlane(GameConstants.Instance.GravityDirection, mGroundNormal).normalized * GameConstants.Instance.GlobalGravityScale;
+            case EMovementState.eGliding:
+                {
+                    ApplyGliderHatForce();
+                    CharacterAirControl();
+                }
+                break;
 
-                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, slidingDirection, 0.1f);
-            }
-
-            // Allow player to control character in the air
-            if (mCanControlInAir && !mSliding)
-            {
-                Vector3 movementDirection = mTargetMovementVector.normalized * mMovementSpeed;
-                movementDirection.y = mRigidbody.velocity.y;
-
-                mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
-            }
+            default:
+                break;
         }
 
 
@@ -239,6 +234,31 @@ public class PlayerController : MonoBehaviour
 
         Vector3 gravity = GameConstants.Instance.GlobalGravityScale * mGravityScale * GameConstants.Instance.GravityDirection;
         mRigidbody.AddForce(gravity, ForceMode.Acceleration);
+
+    }
+
+
+    public void ApplyGliderHatForce()
+    {
+
+        Vector3 gliderForce = GameConstants.Instance.GlobalGravityScale * mGlidingGravityScale * GameConstants.Instance.GravityDirection;
+        //mRigidbody.AddForce(gliderForce, ForceMode.Acceleration);
+        mRigidbody.velocity = new Vector3(mRigidbody.velocity.x, gliderForce.y, mRigidbody.velocity.z); // Temporary fix (Doesnt take gravity direction into acount)
+
+    }
+
+
+    private void CharacterAirControl()
+    {
+
+        // Allow player to control character in the air
+        if (mCanControlInAir && !mSliding)
+        {
+            Vector3 movementDirection = mTargetMovementVector.normalized * mMovementSpeed;
+            movementDirection.y = mRigidbody.velocity.y;
+
+            mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
+        }
 
     }
 
@@ -278,10 +298,72 @@ public class PlayerController : MonoBehaviour
 
         Vector3 targetMovementVector = Vector3.zero;
 
-        targetMovementVector += mCameraAnchorPoint.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
-        targetMovementVector += mCameraAnchorPoint.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
+        targetMovementVector += mCameraRotationXPivot.transform.forward * Input.GetAxisRaw(GameConstants.Instance.VerticalInput);
+        targetMovementVector += mCameraRotationXPivot.transform.right * Input.GetAxisRaw(GameConstants.Instance.HorizontalInput);
 
         return targetMovementVector.normalized;
+
+    }
+
+
+    public void ManageCamera()
+    {
+
+        mTimeUntilStartOfAutomaticAdjustment -= Time.deltaTime;
+
+        // Move camera anchor point to current player position
+        mCameraRotationXPivot.transform.position = transform.position;
+
+        // Get the camera rotation values from player input
+        Vector2 cameraRotationInput = new Vector2(Input.GetAxisRaw(GameConstants.Instance.HorizontalLookInput), Input.GetAxisRaw(GameConstants.Instance.VerticalLookInput));
+
+        // Set input to none if it is less that the specified deadzone value
+        if (cameraRotationInput.magnitude < GameConstants.Instance.RightStickDeadzone)
+        {
+            cameraRotationInput = Vector2.zero;
+        }
+        else
+        {
+            // Camera input detected
+            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+        }
+
+        mShouldAutoAdjustCamera = (mTimeUntilStartOfAutomaticAdjustment <= 0.0f);
+
+        // Apply the camera rotation on the X axis
+        if (mEnableAutomaticCameraAdjustment && mShouldAutoAdjustCamera)
+        {
+            // Automatically adjust camera to player direction
+            mCameraRotationXPivot.transform.forward = Vector3.Lerp(mCameraRotationXPivot.transform.forward, transform.forward, mCameraAutomaticAdjustmentSpeed);
+        }
+        else
+        {
+            mCameraRotationXPivot.transform.eulerAngles += new Vector3(0, cameraRotationInput.x * mCameraRotationSensitivity, 0);
+        }
+
+
+        // Y Pivot
+        mYRotation += cameraRotationInput.y * mCameraRotationSensitivity;
+        mYRotation = Mathf.Clamp(mYRotation, mYRotationMinMax.x, mYRotationMinMax.y);
+
+        if (!mInvertYRotation)
+            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(mYRotation, 0, 0);
+        else
+            mCameraRotationYPivot.transform.localRotation = Quaternion.Euler(-mYRotation, 0, 0);
+
+    }
+
+
+    public void RotatePlayerCharacter()
+    {
+
+        if (Vector3.Angle(mTargetMovementVector, transform.forward) <= mMaxAngleBeforeFlip)
+            transform.forward = Vector3.Lerp(transform.forward, mTargetMovementVector, mRotationLerpSpeed);
+        else
+        {
+            transform.forward = mTargetMovementVector;
+            mTimeUntilStartOfAutomaticAdjustment = mTimeUntilAutomaticCameraAdjustment;
+        }
 
     }
 
@@ -293,10 +375,16 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    
+
     public EMovementState GetMovementState()
     {
         return mMovementState;
+    }
+
+
+    public bool GetIsDashing()
+    {
+        return mIsDashing;
     }
 
 }

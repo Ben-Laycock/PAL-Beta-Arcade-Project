@@ -16,8 +16,8 @@ TagManager:
   - Pickup
   - PickupCrate
   - Player
-  - 
-  - 
+  - BrokenPickupCrate
+  - LlamaCage
   - 
   - 
   - 

@@ -9,9 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 4e2679a7ede5724459bf661c09c25ceb
   - enabled: 1
-    path: Assets/Scenes/Level1.unity
-    guid: 2937b27629b991e4ebe2b7be0b8eb7ab
-  - enabled: 1
     path: Assets/Scenes/MTL.unity
     guid: a5f4e74a36169bd4fbabc4923496a332
+  - enabled: 1
+    path: Assets/Scenes/DanBlockout.unity
+    guid: 8bd6d5f1620af4d4b8c2b6ba8275c601
   m_configObjects: {}

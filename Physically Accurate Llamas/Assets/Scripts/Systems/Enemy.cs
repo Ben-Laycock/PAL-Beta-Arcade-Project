@@ -8,8 +8,12 @@ public class Enemy: MonoBehaviour
     [SerializeField] public float mLookArea = 10f;
     [SerializeField] public Transform[] mPatrolPoints;
     [SerializeField] public GameObject mThePlayer;
+    [SerializeField] public Rigidbody mProjectile;
+    [SerializeField] public float mBulletForce = 20f;
+    [SerializeField] float mRange = 50f;
     
     private int mDesPoint = 0;
+    private bool mInRange = false;
    
     Transform mPlayer;
     NavMeshAgent mAgent;
@@ -17,11 +21,15 @@ public class Enemy: MonoBehaviour
 
     private void Start ()
     {
+       
         mPlayer = PlayerTarget.instance.mPlayer.transform;
         mAgent = GetComponent<NavMeshAgent>();
         mAgent.autoBraking = false;
 
         GoToNextPoint();
+
+        float rand = Random.Range(1f, 2f);
+        InvokeRepeating("Shoot", 2, rand);
     }
 
 
@@ -50,6 +58,13 @@ public class Enemy: MonoBehaviour
 
         }
 
+
+        mInRange = Vector3.Distance(transform.position, mPlayer.position) < mRange;
+
+        if (mInRange)
+            transform.LookAt(mPlayer);
+    
+    
     }
 
     void FacePlayer ()
@@ -72,6 +87,22 @@ public class Enemy: MonoBehaviour
 
      }
 
+
+    void Shoot()
+    {
+
+        if (mInRange)
+        {
+            Rigidbody bullet = (Rigidbody)Instantiate(mProjectile, transform.position + transform.forward, transform.rotation);
+            bullet.AddForce(transform.forward * mBulletForce, ForceMode.Impulse);
+
+            Destroy(bullet.gameObject, 2);
+
+        }
+
+    }
+    
+    
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
