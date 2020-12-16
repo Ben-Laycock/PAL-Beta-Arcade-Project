@@ -161,20 +161,29 @@ public class PlayerController : MonoBehaviour
         mIsDashing = Input.GetAxisRaw(GameConstants.Instance.ControllerYInput) > 0;
 
 
-        // Camera Management
-        ManageCamera();
+        
 
+    }
+
+    private void LateUpdate()
+    {
+        
     }
 
 
     private void FixedUpdate()
     {
 
+        
+
         // Temporary way to stop player when game is paused
         if (GameConstants.Instance.GamePaused)
             return;
 
-        switch(mMovementState)
+        // Camera Management
+        ManageCamera();
+
+        switch (mMovementState)
         {
             case EMovementState.eIdle:
                 {
@@ -226,6 +235,7 @@ public class PlayerController : MonoBehaviour
 
         if (mShouldJump)
         {
+            AudioSystem.Instance.PlaySound("Jump", 0.7f);
             mShouldJump = false;
             mRigidbody.velocity = new Vector3(mRigidbody.velocity.x, 0, mRigidbody.velocity.z);
             mRigidbody.AddForce(-GameConstants.Instance.GravityDirection * mJumpForce, ForceMode.Impulse);
@@ -318,7 +328,10 @@ public class PlayerController : MonoBehaviour
 
         // Move camera anchor point to current player position
         //mCameraRotationXPivot.transform.position = Vector3.Lerp(mCameraRotationXPivot.transform.position, transform.position, 1f);
-        mCameraRotationXPivot.transform.position = transform.position;
+        mCameraRotationXPivot.transform.position = new Vector3(transform.position.x, mCameraRotationXPivot.transform.position.y, transform.position.z);
+        mCameraRotationXPivot.transform.position = Vector3.Lerp(mCameraRotationXPivot.transform.position, 
+            new Vector3(mCameraRotationXPivot.transform.position.x, transform.position.y, mCameraRotationXPivot.transform.position.z),
+            10.0f * Time.smoothDeltaTime);
 
         // Get the camera rotation values from player input
         Vector2 cameraRotationInput = new Vector2(Input.GetAxisRaw(GameConstants.Instance.HorizontalLookInput), Input.GetAxisRaw(GameConstants.Instance.VerticalLookInput));

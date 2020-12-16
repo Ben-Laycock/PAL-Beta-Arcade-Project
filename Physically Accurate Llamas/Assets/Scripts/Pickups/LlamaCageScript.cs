@@ -53,8 +53,11 @@ public class LlamaCageScript : MonoBehaviour
         }
     }
 
-    public void BreakLlamaCage()
+    public void BreakLlamaCage(Vector3 argPlayerMovementDirection)
     {
+        if (argPlayerMovementDirection == null)
+            argPlayerMovementDirection = Vector3.forward;
+
         GameObject brokenLlamaCage = PoolSystem.Instance.GetObjectFromPool(mBrokenLlamaCage, argActivateObject: true, argShouldCreateNonExistingPool: true, argShouldExpandPool: true);
         Transform tempBrokenLlamaCageTransform = brokenLlamaCage.GetComponent<Transform>();
 
@@ -72,22 +75,9 @@ public class LlamaCageScript : MonoBehaviour
             MeshCollider mCollider = childT.gameObject.GetComponent<MeshCollider>();
 
             mCollider.isTrigger = false;
+            rBody.isKinematic = false;
 
-            Vector3 argDirection = Vector3.zero;
-
-            childT.Translate(childT.forward, Space.World);
-
-            if (childT.gameObject.name == "Bar")
-            {
-                rBody.isKinematic = false;
-                childT.rotation = childT.rotation * Quaternion.Euler(20, 0, 0);
-            }
-            else if (childT.gameObject.name == "Top")
-            {
-                rBody.isKinematic = false;
-                argDirection = childT.up * 3;
-                rBody.AddForce(argDirection, UnityEngine.ForceMode.Impulse);
-            }
+            rBody.AddForce(argPlayerMovementDirection.normalized * 10.0f, ForceMode.Impulse);
         }
     }
 }

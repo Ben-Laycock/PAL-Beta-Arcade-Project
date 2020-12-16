@@ -93,7 +93,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.0559506, y: 2.1096394, z: 0.32165146}
+  m_Size: {x: 4, y: 4, z: 0.32165146}
   m_Center: {x: -0.00020555088, y: -0.00056266785, z: 0.000078201294}
 --- !u!54 &4582507871128432117
 Rigidbody:
@@ -127,8 +127,8 @@ MonoBehaviour:
   mLayerMaskIgnore:
     serializedVersion: 2
     m_Bits: 1792
-  mRayDistance: 0.2
-  mRotationIncrement: 1
+  mRayDistance: 1
+  mRotationIncrement: 1.5
 --- !u!199 &219601051
 ParticleSystemRenderer:
   serializedVersion: 6

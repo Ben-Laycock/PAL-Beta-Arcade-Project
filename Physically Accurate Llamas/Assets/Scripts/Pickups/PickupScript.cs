@@ -63,6 +63,11 @@ public class PickupScript : MonoBehaviour
 
         mTransform = this.gameObject.GetComponent<Transform>();
 
+
+
+
+
+
         mOriginalScale = mTransform.localScale;
 
         if ("" == mPickupName)
@@ -89,9 +94,11 @@ public class PickupScript : MonoBehaviour
     {
         mTransform.Rotate(new Vector3(0, mRotationIncrement, 0));
 
-        if (Physics.Raycast(mTransform.position + (-mTransform.up * (mTransform.localScale.y / 2)), -mTransform.up, mRayDistance, ~mLayerMaskIgnore) && false == mHasLanded) 
+        RaycastHit hit;
+
+        if (Physics.Raycast(mTransform.position + (-mTransform.up * (mTransform.localScale.y / 2)), -mTransform.up, out hit,mRayDistance, ~mLayerMaskIgnore) && false == mHasLanded) 
         {
-            mTransform.position = mTransform.position;
+            mTransform.position = hit.point + transform.up*mRayDistance;
             mHasLanded = true;
             mRigidbody.isKinematic = true;
         }

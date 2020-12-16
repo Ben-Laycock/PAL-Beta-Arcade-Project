@@ -16,6 +16,9 @@ public class PlayerPickupController : MonoBehaviour
     [Tooltip("Pickup range which determines how near a player should be near pickups before they collect.")]
     [SerializeField] private float mPickupRange = 1;
 
+    [Tooltip("How close to the player does the pickup need to be before being collected")]
+    [SerializeField] private float mCollectPickupRange = 1.0f;
+
     [Tooltip("Pickup collection speed which determines how fast a pickup moves towards the player.")]
     [SerializeField] private float mPickupCollectSpeed = 0.25f;
 
@@ -48,6 +51,50 @@ public class PlayerPickupController : MonoBehaviour
                 pickupScript.hasBeenCollected = true;
                 mPickupGameObjects.Add(otherCollider.gameObject);
                 pickupParticleSystem.Play();
+            }
+        }
+
+        if (otherCollider.gameObject.layer == 12)
+        {
+            Transform llamaCageTransform = otherCollider.gameObject.transform;
+            LlamaCageScript llamaCageScript = llamaCageTransform.gameObject.GetComponent<LlamaCageScript>();
+
+            if (!llamaCageScript.hasBeenDestroyed && pControllerScript.GetIsDashing())
+            {
+                llamaCageScript.hasBeenDestroyed = true;
+                llamaCageTransform.gameObject.layer = LayerMask.NameToLayer("BrokenPickupCrate");
+
+                if (null == llamaCageTransform)
+                    return;
+
+                llamaCageScript.BreakLlamaCage(transform.forward);
+
+                CollectableUIClass collectable = mCollectableUIManagerScript.GetCollectableByName(llamaCageScript.pickupName);
+
+                float rotIncrementPerLlama = 360 / llamaCageScript.llamaAmount;
+                float rotIncrement = 0;
+
+                for (int i = 0; i < llamaCageScript.llamaAmount; i++)
+                {
+                    GameObject llamaObj = PoolSystem.Instance.GetObjectFromPool(llamaCageScript.llamaObject, argShouldExpandPool: true, argActivateObject: true, argShouldCreateNonExistingPool: true);
+                    llamaObj.transform.position = llamaCageTransform.position;
+
+                    if (null == llamaObj)
+                        continue;
+
+                    MiniLlamaScript llamaScript = llamaObj.GetComponent<MiniLlamaScript>();
+                    llamaObj.transform.rotation = Quaternion.Euler(0, rotIncrement, 0);
+
+                    Rigidbody llamaRb = llamaObj.GetComponent<Rigidbody>();
+                    llamaRb.isKinematic = false;
+
+                    llamaRb.AddForce((llamaObj.transform.forward + llamaObj.transform.up) * 3, UnityEngine.ForceMode.Impulse);
+                    llamaScript.hasSpawned = true;
+
+                    collectable.IncreaseCollectableQuantity();
+
+                    rotIncrement += rotIncrementPerLlama;
+                }
             }
         }
     }
@@ -100,55 +147,13 @@ public class PlayerPickupController : MonoBehaviour
                     tempRotationIncrement += rotationIncrementPerPickup;
                 }
 
+                AudioSystem.Instance.PlaySound("BreakCrate", 1.0f);
                 // Break the crate model here (spawn broken crate mesh).
-                pickupCrateScript.SpawnBrokenCrate();
-            }
-        }
-
-        if (otherCollision.gameObject.layer == 12)
-        {
-            Transform llamaCageTransform = otherCollision.gameObject.transform;
-            LlamaCageScript llamaCageScript = llamaCageTransform.gameObject.GetComponent<LlamaCageScript>();
-
-            if (!llamaCageScript.hasBeenDestroyed && pControllerScript.GetIsDashing())
-            {
-                llamaCageScript.hasBeenDestroyed = true;
-                llamaCageTransform.gameObject.layer = LayerMask.NameToLayer("BrokenPickupCrate");
-
-                if (null == llamaCageTransform)
-                    return;
-
-                llamaCageScript.BreakLlamaCage();
-
-                CollectableUIClass collectable = mCollectableUIManagerScript.GetCollectableByName(llamaCageScript.pickupName);
-
-                float rotIncrementPerLlama = 360 / llamaCageScript.llamaAmount;
-                float rotIncrement = 0;
-
-                for (int i = 0; i < llamaCageScript.llamaAmount; i++)
-                {
-                    GameObject llamaObj = PoolSystem.Instance.GetObjectFromPool(llamaCageScript.llamaObject, argShouldExpandPool: true, argActivateObject: true, argShouldCreateNonExistingPool: true);
-                    llamaObj.transform.position = llamaCageTransform.position;
-
-                    if (null == llamaObj)
-                        continue;
-
-                    MiniLlamaScript llamaScript = llamaObj.GetComponent<MiniLlamaScript>();
-                    llamaObj.transform.rotation = Quaternion.Euler(0, rotIncrement, 0);
-
-                    Rigidbody llamaRb = llamaObj.GetComponent<Rigidbody>();
-                    llamaRb.isKinematic = false;
-
-                    llamaRb.AddForce((llamaObj.transform.forward + llamaObj.transform.up) * 3, UnityEngine.ForceMode.Impulse);
-                    llamaScript.hasSpawned = true;
-
-                    collectable.IncreaseCollectableQuantity();
-
-                    rotIncrement += rotIncrementPerLlama;
-                }
+                pickupCrateScript.SpawnBrokenCrate(transform.forward);
             }
         }
     }
+
 
     private void FixedUpdate()
     {
@@ -168,7 +173,7 @@ public class PlayerPickupController : MonoBehaviour
                 gameObjectRenderer.material.color = new Color(gameObjectRenderer.material.color.r, gameObjectRenderer.material.color.g, gameObjectRenderer.material.color.b, Mathf.Clamp(playerToPickupMagnitude, 0.0f, 1.0f));
             }
 
-            if (0.2f > playerToPickupMagnitude)
+            if (mCollectPickupRange > playerToPickupMagnitude)
             {
                 // Add the pickup to the collection total.
                 CollectableUIClass collectable = mCollectableUIManagerScript.GetCollectableByName(gameObjectPickupScript.pickupName);

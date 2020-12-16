@@ -42,7 +42,7 @@ public class PickupCrateScript : MonoBehaviour
         
     }
 
-    public void SpawnBrokenCrate()
+    public void SpawnBrokenCrate(Vector3 argPlayerMovementDirection)
     {
         GameObject tempBrokenCrate = PoolSystem.Instance.GetObjectFromPool(mBrokenCrate, argActivateObject: true, argShouldCreateNonExistingPool: true, argShouldExpandPool: true);
         Transform tempBrokenCrateTransform = tempBrokenCrate.GetComponent<Transform>();
@@ -50,7 +50,9 @@ public class PickupCrateScript : MonoBehaviour
         if (null == tempBrokenCrateTransform)
             return;
 
-        Vector3 cratePosition = mCrateTransform.position;
+        Vector3 cratePosition = new Vector3(mCrateTransform.position.x,
+            mCrateTransform.position.y + 0.5f,
+            mCrateTransform.position.z);
 
         Destroy(this.gameObject);
         tempBrokenCrateTransform.position = cratePosition;
@@ -58,12 +60,10 @@ public class PickupCrateScript : MonoBehaviour
         foreach (Transform childT in tempBrokenCrate.transform)
         {
             Rigidbody rBody = childT.gameObject.GetComponent<Rigidbody>();
-            BoxCollider bCollider = childT.gameObject.GetComponent<BoxCollider>();
 
             rBody.isKinematic = false;
 
-            Vector3 argDirection = (childT.up * 1.5f) + childT.forward + childT.right;
-            rBody.AddForce(argDirection * 2, UnityEngine.ForceMode.Impulse);
+            rBody.AddForce(argPlayerMovementDirection * 10.0f, UnityEngine.ForceMode.Impulse);
         }
     }
 }
