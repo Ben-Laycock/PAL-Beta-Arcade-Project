@@ -113,10 +113,10 @@ public class PlayerPickupController : MonoBehaviour
                 float rotationIncrementPerPickup = 360 / pickupCrateScript.pickupAmount;
                 float tempRotationIncrement = 0;
 
-                // Get a set amount of pickup objects from the object pool here and store them in a temporary array.
+                // Get a set amount of pickup objects from the object pool and store them in a temporary array.
                 for (int i = 0; i < pickupCrateScript.pickupAmount; i++)
                 {
-                    // Get a specific pickup from the object pool here.
+                    // Get a specific pickup from the object pool.
                     GameObject pickupObject = null;
                     PickupScript pickupObjectScript = null;
 
@@ -148,7 +148,6 @@ public class PlayerPickupController : MonoBehaviour
                 }
 
                 AudioSystem.Instance.PlaySound("BreakCrate", 1.0f);
-                // Break the crate model here (spawn broken crate mesh).
                 pickupCrateScript.SpawnBrokenCrate(transform.forward);
             }
         }
@@ -179,7 +178,7 @@ public class PlayerPickupController : MonoBehaviour
                 CollectableUIClass collectable = mCollectableUIManagerScript.GetCollectableByName(gameObjectPickupScript.pickupName);
                 collectable.IncreaseCollectableQuantity();
 
-                // Disable the pickup in the object pool, which then removes it from the game scene here.
+                // Disable the pickup in the object pool, which then removes it from the game scene.
                 gameObjectTransform.gameObject.SetActive(false);
 
                 gameObjectTransform.localScale = gameObjectPickupScript.originalScale;
