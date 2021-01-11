@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class ChangeLlamaHat : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField] private GameObject mHatDisplayManager;
+
+    private HatDisplayUIManager mHatDisplayUIManagerScript;
+
+    [SerializeField] private GameObject mGliderHat;
+
+    private void Start()
     {
-        
+        mHatDisplayUIManagerScript = mHatDisplayManager.GetComponent<HatDisplayUIManager>();
     }
 
     public void OnTriggerEnter(Collider other)
     {
         if(other.name == "Player")
         {
-            GameObject hat = GameObject.Find("SM_GliderHat_MD");
-            print("hit");
-            if (hat)
+            mHatDisplayUIManagerScript.ActivateSelectedHatUI();
+
+            if (mGliderHat)
             {
-                hat.SetActive(true);
+                mGliderHat.SetActive(true);
                 Destroy(gameObject.transform.parent.gameObject);
             }
             else

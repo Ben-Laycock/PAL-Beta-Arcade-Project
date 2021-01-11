@@ -115,6 +115,8 @@ public class OptionsMenu : MonoBehaviour
     private void SliderValueChanged()
     {
 
+        AudioSystem.Instance.PlaySound("SliderClick", 0.2f);
+
         PlayerPrefs.SetInt("AudioVolumeSliderValue", (int)(mAudioSliderScript.value * 100));
         mAudioPercentageTextScript.text = ((int)(mAudioSliderScript.value * 100)).ToString() + "%";
 
@@ -128,6 +130,8 @@ public class OptionsMenu : MonoBehaviour
         //mResolutionDropDown.value = PlayerPrefs.GetInt("SelectedResolutionValue", 0);
 
         RevertSettings();
+
+        AudioSystem.Instance.PlaySound("CloseMenu", 1f);
 
         if (!mSwitchToMainMenu)
         {
@@ -166,6 +170,8 @@ public class OptionsMenu : MonoBehaviour
 
     public void OnApplyButtonPressed()
     {
+
+        AudioSystem.Instance.PlaySound("SliderClick", 1f);
 
         int vSyncBoolFromButton = mVSyncToggleButtonScript.GetButtonState() ? 0 : 1;
 
@@ -246,6 +252,8 @@ public class OptionsMenu : MonoBehaviour
     public void OnRevertButtonPressed()
     {
 
+        AudioSystem.Instance.PlaySound("SliderClick", 1f);
+
         PlayerPrefs.SetInt("SelectedWindowValue", PlayerPrefs.GetInt("OldSelectedWindowValue", 0));
         PlayerPrefs.SetInt("SelectedResolutionValue", PlayerPrefs.GetInt("OldSelectedResolutionValue", 0));
 
@@ -297,6 +305,8 @@ public class OptionsMenu : MonoBehaviour
 
     public void OnAudioTogglePressed()
     {
+        AudioSystem.Instance.PlaySound("SliderClick", 1f);
+
         int valueToSet = 0;
 
         if(PlayerPrefs.GetInt("AudioEnabled", 0) == 0)
@@ -312,15 +322,9 @@ public class OptionsMenu : MonoBehaviour
 
     public void OnVsyncTogglePressed()
     {
-        //int valueToSet = 0;
-
-        //if (PlayerPrefs.GetInt("VSyncEnabled", 0) == 0)
-        //{
-        //    valueToSet = 1;
-        //}
+        AudioSystem.Instance.PlaySound("SliderClick", 1f);
 
         mVSyncToggleButtonScript.ToggleState();
-
     }
 
 }

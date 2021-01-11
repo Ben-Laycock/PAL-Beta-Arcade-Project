@@ -63,7 +63,7 @@ public class PauseMenu : MonoBehaviour
 
         if(prevCurrent != EventSystem.current.currentSelectedGameObject)
         {
-            if(mGamePaused)
+            if (mGamePaused)
             {
                 prevCurrent = EventSystem.current.currentSelectedGameObject;
                 //Debug.Log(EventSystem.current.currentSelectedGameObject);
@@ -112,12 +112,14 @@ public class PauseMenu : MonoBehaviour
 
                 if(!mGamePaused)
                 {
+                    AudioSystem.Instance.PlaySound("CloseMenu", 1f);
                     mButtonHintKey.SetActive(false);
                     mMenuBackground.SetActive(false);
                 }
                 else
                 {
                     mMenuBackground.SetActive(true);
+                    AudioSystem.Instance.PlaySound("OpenMenu", 1f);
                 }
 
             }
@@ -204,6 +206,8 @@ public class PauseMenu : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(null);
             EventSystem.current.SetSelectedGameObject(mOptionsFirstButton);
 
+            AudioSystem.Instance.PlaySound("SliderClick", 1.0f);
+
             mMenuState = 1;
             mMenuMoveTimer = 0.0f;
             mSwitchToOptionsMenu = true;
@@ -216,10 +220,13 @@ public class PauseMenu : MonoBehaviour
 
         mGamePaused = true;
 
-        mGameOverFirstButton.transform.parent.parent.Find("GameOverManager").gameObject.GetComponent<GameOverMenu>().ToggleGameOverOn();
+        GameOverMenu GameOverMenuScript = mGameOverFirstButton.transform.parent.parent.Find("GameOverManager").gameObject.GetComponent<GameOverMenu>();
+
+        GameOverMenuScript.ToggleGameOverOn();
 
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(mGameOverFirstButton);
+
     }
 
     public void OnResumeButtonPressed()
@@ -228,6 +235,8 @@ public class PauseMenu : MonoBehaviour
         {
             mGamePaused = !mGamePaused;
 
+            AudioSystem.Instance.PlaySound("CloseMenu", 1.0f);
+
             CorrectMenu(mGamePaused);
             mMenuBackground.SetActive(false);
         }
@@ -235,6 +244,7 @@ public class PauseMenu : MonoBehaviour
 
     public void OnReturnToMainMenuButtonPressed()
     {
+        AudioSystem.Instance.PlaySound("CloseMenu", 1.0f);
         SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 

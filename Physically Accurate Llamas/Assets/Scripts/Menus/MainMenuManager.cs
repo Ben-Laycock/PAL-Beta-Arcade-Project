@@ -52,7 +52,9 @@ public class MainMenuManager : MonoBehaviour
     public void OnPlayButtonPressed()
     {
 
-        if(mLoadToTestingLevel)
+        AudioSystem.Instance.PlaySound("SliderClick", 1f);
+
+        if (mLoadToTestingLevel)
         {
             SceneManager.LoadSceneAsync("MTL", LoadSceneMode.Single);
         }
@@ -69,6 +71,8 @@ public class MainMenuManager : MonoBehaviour
 
         if(!mSwitchToOptionsMenu)
         {
+            AudioSystem.Instance.PlaySound("SliderClick", 1f);
+
             EventSystem.current.SetSelectedGameObject(null);
             EventSystem.current.SetSelectedGameObject(mOptionsFirstButton);
 
@@ -81,6 +85,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnExitButtonPressed()
     {
+        AudioSystem.Instance.PlaySound("CloseMenu", 1f);
 
         Application.Quit();
 
