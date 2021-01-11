@@ -84,7 +84,7 @@ public class PickupScript : MonoBehaviour
             return;
 
         mParticleSystemModule = mParticleSystem.main;
-        mParticleSystemModule.startColor = mRenderer.material.color;
+        //mParticleSystemModule.startColor = mRenderer.material.color;
 
         mOriginalColour = mRenderer.material.color;
         mHasLanded = false;
@@ -95,8 +95,8 @@ public class PickupScript : MonoBehaviour
         mTransform.Rotate(new Vector3(0, mRotationIncrement, 0));
 
         RaycastHit hit;
-
-        if (Physics.Raycast(mTransform.position + (-mTransform.up * (mTransform.localScale.y / 2)), -mTransform.up, out hit,mRayDistance, ~mLayerMaskIgnore) && false == mHasLanded) 
+        //+ (-mTransform.up * (mTransform.localScale.y / 2))
+        if (Physics.Raycast(mTransform.position, -mTransform.up, out hit,mRayDistance, ~mLayerMaskIgnore) && false == mHasLanded) 
         {
             mTransform.position = hit.point + transform.up*mRayDistance;
             mHasLanded = true;

@@ -53,6 +53,8 @@ public class PlayerController : MonoBehaviour
 
     private EMovementState mMovementState = EMovementState.eIdle;
 
+    [SerializeField] private GameObject mLlamaRigObject = null;
+    private Animator mAnim = null;
 
     [Space]
     [Space]
@@ -96,6 +98,9 @@ public class PlayerController : MonoBehaviour
         mCameraRotationXPivot = GameObject.Find("CameraRotationXPivot");
         mCameraRotationYPivot = GameObject.Find("CameraRotationYPivot");
         mCamera = GameObject.Find("Main Camera");
+
+        // Find the objects animator
+        mAnim = mLlamaRigObject.GetComponent<Animator>();
 
     }
 
@@ -187,19 +192,28 @@ public class PlayerController : MonoBehaviour
         {
             case EMovementState.eIdle:
                 {
+                    mAnim.SetBool("isRunning", false);
+                    mAnim.SetBool("isCharging", false);
                     mRigidbody.velocity = Vector3.zero;
                 }
                 break;
 
             case EMovementState.eWalking:
                 {
+                    mAnim.SetBool("isRunning", true);
                     // Project the players target movement direction onto the surface the player is standing on
                     Vector3 movementDirection = Vector3.ProjectOnPlane(mTargetMovementVector, mGroundNormal).normalized;
 
                     if (!mIsDashing) // Is walking
+                    {
+                        mAnim.SetBool("isCharging", false);
                         movementDirection *= mMovementSpeed;
+                    }
                     else
+                    {
+                        mAnim.SetBool("isCharging", true);
                         movementDirection *= mRunningSpeed;
+                    }
 
                     mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
                 }
@@ -207,6 +221,7 @@ public class PlayerController : MonoBehaviour
 
             case EMovementState.eFalling:
                 {
+                    mAnim.SetBool("isFalling", true);
                     ApplyGravity();
 
                     // Apply sliding motion on surface normal
@@ -235,6 +250,7 @@ public class PlayerController : MonoBehaviour
 
         if (mShouldJump)
         {
+            mAnim.SetTrigger("jumped");
             AudioSystem.Instance.PlaySound("Jump", 0.7f);
             mShouldJump = false;
             mRigidbody.velocity = new Vector3(mRigidbody.velocity.x, 0, mRigidbody.velocity.z);
@@ -299,6 +315,10 @@ public class PlayerController : MonoBehaviour
             else
             {
                 mSliding = false;
+                if (mGrounded == false)
+                {
+                    mAnim.SetTrigger("landed");
+                }
                 return true;
             }
         }
