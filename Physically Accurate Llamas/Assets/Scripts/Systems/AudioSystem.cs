@@ -26,7 +26,6 @@ public class AudioSystem : MonoBehaviour
             Destroy(this.gameObject);
 
         sInstance = this;
-        DontDestroyOnLoad(this.gameObject);
 
     }
 
@@ -43,7 +42,7 @@ public class AudioSystem : MonoBehaviour
     }
 
 
-    [SerializeField] private Dictionary<string, AudioClip> mSounds = new Dictionary<string, AudioClip>();
+    [SerializeField] private static Dictionary<string, AudioClip> mSounds = new Dictionary<string, AudioClip>();
     [SerializeField] private GameObject mAudioObject = null;
 
 
@@ -94,7 +93,8 @@ public class AudioSystem : MonoBehaviour
         // Return due to invalid key
         if (!mSounds.ContainsKey(argKey) || "" == argKey)
         {
-            Debug.LogWarning("Audio System: Given invalid key.");
+            print(mSounds.Count);
+            Debug.LogWarning("Audio System: Given invalid key: " + argKey);
             return;
         }
 
@@ -130,6 +130,11 @@ public class AudioSystem : MonoBehaviour
 
         return PoolSystem.Instance.GetObjectFromPool(mAudioObject, argShouldExpandPool: true, argShouldCreateNonExistingPool: true);
 
+    }
+
+    public int GetSoundCount()
+    {
+        return mSounds.Count;
     }
 
 }

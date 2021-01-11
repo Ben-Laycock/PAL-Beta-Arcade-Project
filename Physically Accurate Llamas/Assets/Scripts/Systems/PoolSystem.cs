@@ -30,7 +30,7 @@ public class PoolSystem : MonoBehaviour
     }
 
 
-    [SerializeField] private Dictionary<GameObject, List<GameObject>> mPools = new Dictionary<GameObject, List<GameObject>>();
+    [SerializeField] private static Dictionary<GameObject, List<GameObject>> mPools = new Dictionary<GameObject, List<GameObject>>();
     [SerializeField] private int mDefaultNumberOfObjectsToCreate = 10;
 
 
@@ -96,7 +96,7 @@ public class PoolSystem : MonoBehaviour
             // Create parent object for new pool
             GameObject newPoolParentObject = new GameObject("Pool_" + argKey.name);
             newPoolParentObject.transform.parent = transform;
-
+            
             // Populate new pool with specified amount of objects
             for (int i = 0; i < argAmount; i++)
             {

@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
 
     [SerializeField] private float mGlidingGravityScale = 0.25f;
+    [SerializeField] private float mHeightBeforeCanGlide = 3.0f;
 
 
     [SerializeField] private LayerMask mGroundLayerMaskCheck = new LayerMask();
@@ -143,11 +144,19 @@ public class PlayerController : MonoBehaviour
         else
         {
             if (Input.GetAxisRaw(GameConstants.Instance.ControllerBInput) > 0)
-                mMovementState = EMovementState.eGliding;
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, mGroundLayerMaskCheck))
+                {
+                    if (hit.distance > mHeightBeforeCanGlide || mMovementState == EMovementState.eGliding)
+                    {
+                        mMovementState = EMovementState.eGliding;
+                    }
+                }
+            }
             else
                 mMovementState = EMovementState.eFalling;
         }
-
 
 
         //mShouldRun = Input.GetAxisRaw(GameConstants.Instance.RunInput) > 0;

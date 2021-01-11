@@ -22,7 +22,9 @@ public class CreateDefaultSounds : MonoBehaviour
         
         foreach(SoundSystemClip s in mSounds)
         {
+            print("Added Sound " + s.mName);
             AudioSystem.Instance.AddSoundToSystem(s.mName, s.mClip);
+            print("Sound Count " + AudioSystem.Instance.GetSoundCount());
         }
 
     }

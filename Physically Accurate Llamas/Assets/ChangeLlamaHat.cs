@@ -20,14 +20,20 @@ public class ChangeLlamaHat : MonoBehaviour
     {
         if(other.name == "Player")
         {
-            GameObject hat = other.transform.Find("SM_GliderHat_MD").gameObject;
-
-            if(hat)
+            GameObject hat = GameObject.Find("SM_GliderHat_MD");
+            print("hit");
+            if (hat)
             {
                 hat.SetActive(true);
                 Destroy(gameObject.transform.parent.gameObject);
             }
+            else
+                print("null");
 
+        }
+        else
+        {
+            print("other");
         }
     }
 
