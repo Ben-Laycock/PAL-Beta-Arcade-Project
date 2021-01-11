@@ -230,6 +230,8 @@ public class PlayerController : MonoBehaviour
 
             case EMovementState.eFalling:
                 {
+                    mAnim.SetBool("isRunning", false);
+                    mAnim.SetBool("isCharging", false);
                     mAnim.SetBool("isFalling", true);
                     ApplyGravity();
 
@@ -247,6 +249,9 @@ public class PlayerController : MonoBehaviour
 
             case EMovementState.eGliding:
                 {
+                    mAnim.SetBool("isRunning", false);
+                    mAnim.SetBool("isCharging", false);
+                    mAnim.SetBool("isFalling", true);
                     ApplyGliderHatForce();
                     CharacterAirControl();
                 }
