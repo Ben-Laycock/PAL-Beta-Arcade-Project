@@ -64765,5 +64765,10 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1033127667753640397, guid: 23b0e46962cfa6d4990ae47749b008cb,
+        type: 3}
+      propertyPath: mCollectableDictionary.Array.data[1].mMaxQuantity
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 23b0e46962cfa6d4990ae47749b008cb, type: 3}
