@@ -63,11 +63,6 @@ public class PickupScript : MonoBehaviour
 
         mTransform = this.gameObject.GetComponent<Transform>();
 
-
-
-
-
-
         mOriginalScale = mTransform.localScale;
 
         if ("" == mPickupName)
@@ -84,7 +79,6 @@ public class PickupScript : MonoBehaviour
             return;
 
         mParticleSystemModule = mParticleSystem.main;
-        //mParticleSystemModule.startColor = mRenderer.material.color;
 
         mOriginalColour = mRenderer.material.color;
         mHasLanded = false;
@@ -95,7 +89,7 @@ public class PickupScript : MonoBehaviour
         mTransform.Rotate(new Vector3(0, mRotationIncrement, 0));
 
         RaycastHit hit;
-        //+ (-mTransform.up * (mTransform.localScale.y / 2))
+
         if (Physics.Raycast(mTransform.position, -mTransform.up, out hit,mRayDistance, ~mLayerMaskIgnore) && false == mHasLanded) 
         {
             mTransform.position = hit.point + transform.up*mRayDistance;
