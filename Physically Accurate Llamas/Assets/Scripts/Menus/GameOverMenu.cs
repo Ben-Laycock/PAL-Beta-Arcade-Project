@@ -46,7 +46,7 @@ public class GameOverMenu : MonoBehaviour
         mLlamaCageCollectableQuantityText.text = mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetCurrentQuantity().ToString() + "/" + mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetMaxQuantity().ToString();
 
 
-        float Percentage = ((float)mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetCurrentQuantity() / (float)mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetMaxQuantity()) * 100.0f;
+        int Percentage = (mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetCurrentQuantity() / mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetMaxQuantity()) * 100;
 
         mPercentageTextText.text = "LEVEL " + Percentage.ToString() + "% COMPLETE!";
     }
