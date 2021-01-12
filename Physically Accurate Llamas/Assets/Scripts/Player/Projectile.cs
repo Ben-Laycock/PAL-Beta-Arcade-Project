@@ -24,7 +24,7 @@ public class Projectile: MonoBehaviour
             Temporary_RigidBody.AddForce(transform.forward * mProjectileForce);
 
             
-            Destroy(BulletHandler, 0.5f);
+            //Destroy(BulletHandler, 0.5f);
         }
     }
 }

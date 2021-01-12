@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1896636807688491368}
   - component: {fileID: 2292358881821756146}
   - component: {fileID: 8917790205116398512}
-  - component: {fileID: 8279503206001104376}
+  - component: {fileID: 1728581533062276714}
   - component: {fileID: 2327029557574547793}
-  m_Layer: 0
+  - component: {fileID: 1088231304}
+  m_Layer: 13
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 831d40bbfdb97c947ba6bbb692111c85, type: 2}
+  - {fileID: 2100000, guid: 287ea3bae13296f48854e265cb935001, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79,7 +80,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &8279503206001104376
+--- !u!135 &1728581533062276714
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,4 +108,18 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
+--- !u!114 &1088231304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7825209675920421973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3eb17f14833cfaf4bacf0223c3439175, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mSpitParticleObject: {fileID: 49824481438560300, guid: aa26bf59309cfca4291ac107fd743ce1,
+    type: 3}

@@ -18,11 +18,11 @@ public class EnemyHandler : MonoBehaviour
         mPlayerController = mPlayerObject.GetComponent<PlayerController>();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
-        if(other.name == "Player")
+        if(other.gameObject.name == "Player")
         {
-            if(mPlayerController.GetMovementState() == PlayerController.EMovementState.eCharging)
+            if(mPlayerController.GetIsCharging())
             {
                 Instantiate(mDeathParticle, transform.position, transform.rotation);
                 Destroy(gameObject);

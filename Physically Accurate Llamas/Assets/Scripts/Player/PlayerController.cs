@@ -10,8 +10,7 @@ public class PlayerController : MonoBehaviour
         eIdle,
         eWalking,
         eFalling,
-        eGliding,
-        eCharging
+        eGliding
     }
 
 
@@ -34,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float mMovementSpeed = 5f;
     [SerializeField] private float mRunningSpeed = 10f;
+    private bool mIsCharging = false;
 
     [Tooltip("Time taken for character to get to top speed. Smaller values take longer.")]
     [SerializeField] private float mTimeToLerpToMaxSpeed = 0.1f;
@@ -205,6 +205,7 @@ public class PlayerController : MonoBehaviour
                     mAnim.SetBool("isRunning", false);
                     mAnim.SetBool("isCharging", false);
                     mRigidbody.velocity = Vector3.zero;
+                    mIsCharging = false;
                 }
                 break;
 
@@ -218,11 +219,13 @@ public class PlayerController : MonoBehaviour
                     {
                         mAnim.SetBool("isCharging", false);
                         movementDirection *= mMovementSpeed;
+                        mIsCharging = false;
                     }
                     else
                     {
                         mAnim.SetBool("isCharging", true);
                         movementDirection *= mRunningSpeed;
+                        mIsCharging = true;
                     }
 
                     mRigidbody.velocity = Vector3.Lerp(mRigidbody.velocity, movementDirection, mTimeToLerpToMaxSpeed);
@@ -231,6 +234,7 @@ public class PlayerController : MonoBehaviour
 
             case EMovementState.eFalling:
                 {
+                    mIsCharging = false;
                     mAnim.SetBool("isRunning", false);
                     mAnim.SetBool("isCharging", false);
                     mAnim.SetBool("isFalling", true);
@@ -250,6 +254,7 @@ public class PlayerController : MonoBehaviour
 
             case EMovementState.eGliding:
                 {
+                    mIsCharging = false;
                     mAnim.SetBool("isRunning", false);
                     mAnim.SetBool("isCharging", false);
                     mAnim.SetBool("isFalling", true);
@@ -274,6 +279,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
+
+    public bool GetIsCharging()
+    {
+        return mIsCharging;
+    }
 
     private void ApplyGravity()
     {

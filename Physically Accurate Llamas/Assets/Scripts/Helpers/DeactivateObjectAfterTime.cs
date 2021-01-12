@@ -5,7 +5,7 @@ using UnityEngine;
 public class DeactivateObjectAfterTime : MonoBehaviour
 {
 
-    private float mDeactivationTime = 0f;
+    [SerializeField]private float mDeactivationTime = 0f;
     public float DeactivationTime
     {
 
