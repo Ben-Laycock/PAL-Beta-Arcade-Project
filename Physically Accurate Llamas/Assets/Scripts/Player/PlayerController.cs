@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float mGravityScale = 1f;
 
-
+    public bool mHasGliderHat = false;
     [SerializeField] private float mGlidingGravityScale = 0.25f;
     [SerializeField] private float mHeightBeforeCanGlide = 3.0f;
 
@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (Input.GetAxisRaw(GameConstants.Instance.ControllerBInput) > 0)
+            if (Input.GetAxisRaw(GameConstants.Instance.ControllerBInput) > 0 && mHasGliderHat)
             {
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, mGroundLayerMaskCheck))

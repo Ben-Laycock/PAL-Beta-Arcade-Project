@@ -16,7 +16,7 @@ public class StartBackgroundMusic : MonoBehaviour
         ObjectAudioSource.loop = true;
         ObjectAudioSource.clip = mBackgroundMusic;
 
-        ObjectAudioSource.volume = 0.1f;
+        ObjectAudioSource.volume = 0.1f * (float)PlayerPrefs.GetInt("AudioVolumeSliderValue") / 100.0f; ;
 
         ObjectAudioSource.Play();
     }

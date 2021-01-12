@@ -10,6 +10,7 @@ public class ChangeLlamaHat : MonoBehaviour
     private HatDisplayUIManager mHatDisplayUIManagerScript;
 
     [SerializeField] private GameObject mGliderHat;
+    [SerializeField] private PlayerController mPlayerController;
 
     private void Start()
     {
@@ -25,6 +26,7 @@ public class ChangeLlamaHat : MonoBehaviour
             if (mGliderHat)
             {
                 mGliderHat.SetActive(true);
+                mPlayerController.mHasGliderHat = true;
                 Destroy(gameObject.transform.parent.gameObject);
             }
             else
