@@ -156,10 +156,10 @@ public class OptionsMenu : MonoBehaviour
 
             mMenuMoveTimer += Time.deltaTime * mMenuSlideSpeedModifier;
 
-            mMainMenuObjectRectTransform.position = Vector3.Lerp(mMainMenuOriginalPosition + new Vector3(-Screen.width, 0, 0), mMainMenuOriginalPosition, Mathf.Clamp(mMenuMoveTimer, 0.0f, 1.0f));
-            mOptionsMenuObjectRectTransform.position = Vector3.Lerp(mOptionsMenuOriginalPosition+ new Vector3(-Screen.width, 0, 0), mOptionsMenuOriginalPosition, Mathf.Clamp(mMenuMoveTimer, 0.0f, 1.0f));
+            mMainMenuObjectRectTransform.position = Vector3.Lerp(new Vector3(-Screen.width/2, Screen.height/2, 0), new Vector3(Screen.width/2, Screen.height/2, 0), Mathf.Clamp(mMenuMoveTimer, 0.0f, 1.0f));
+            mOptionsMenuObjectRectTransform.position = Vector3.Lerp(new Vector3(Screen.width/2, Screen.height/2, 0), new Vector3(Screen.width + Screen.width/2, Screen.height/2, 0), Mathf.Clamp(mMenuMoveTimer, 0.0f, 1.0f));
 
-            if ((mMainMenuObjectRectTransform.position - mMainMenuOriginalPosition).magnitude <= 0.05)
+            if (Vector3.Distance(mMainMenuObjectRectTransform.position, new Vector3(Screen.width/2, Screen.height/2, 0)) <= 0.05)
             {
                 mSwitchToMainMenu = false;
             }
