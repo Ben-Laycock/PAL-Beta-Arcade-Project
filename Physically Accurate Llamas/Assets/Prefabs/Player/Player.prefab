@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 8699936575485131058}
   - component: {fileID: 8699936575485131057}
   - component: {fileID: 8699936575485131056}
+  - component: {fileID: 128590669474995351}
   - component: {fileID: 8699936575485131068}
   - component: {fileID: 3083852904652755282}
   - component: {fileID: 8699936575485131063}
@@ -180,6 +181,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &128590669474995351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8699936575485131062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede6fc54d1e5f9049a157f7bc57ea125, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mBackgroundMusic: {fileID: 8300000, guid: bef360cf422649241b7e8550507b9c40, type: 3}
 --- !u!114 &8699936575485131068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mGravityScale: 3
   mGlidingGravityScale: 0.25
+  mHeightBeforeCanGlide: 3
   mGroundLayerMaskCheck:
     serializedVersion: 2
     m_Bits: 1
@@ -474,7 +489,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -6385644187476637495, guid: 45e8dd74c09603c4aac6a8ee3b9ae364,
+    - target: {fileID: -5263629669870986680, guid: 45e8dd74c09603c4aac6a8ee3b9ae364,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -484,7 +499,7 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 8b24f3f257e1fef4595ab87f76b94a17, type: 2}
-    - target: {fileID: -5263629669870986680, guid: 45e8dd74c09603c4aac6a8ee3b9ae364,
+    - target: {fileID: -6385644187476637495, guid: 45e8dd74c09603c4aac6a8ee3b9ae364,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
