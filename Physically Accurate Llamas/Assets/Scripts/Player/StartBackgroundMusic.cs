@@ -6,10 +6,13 @@ public class StartBackgroundMusic : MonoBehaviour
 {
     [SerializeField] private AudioClip mBackgroundMusic;
 
+    private GameObject AudioObject;
+    private AudioSource ObjectAudioSource;
+
     private void Start()
     {
-        GameObject AudioObject = AudioSystem.Instance.GetAudioObject();
-        AudioSource ObjectAudioSource = AudioObject.GetComponent<AudioSource>();
+        AudioObject = AudioSystem.Instance.GetAudioObject();
+        ObjectAudioSource = AudioObject.GetComponent<AudioSource>();
 
         AudioObject.SetActive(true);
 
@@ -19,5 +22,11 @@ public class StartBackgroundMusic : MonoBehaviour
         ObjectAudioSource.volume = 0.1f * (float)PlayerPrefs.GetInt("AudioVolumeSliderValue") / 100.0f; ;
 
         ObjectAudioSource.Play();
+    }
+
+    public void StopMusic()
+    {
+        ObjectAudioSource.Stop();
+        AudioObject.SetActive(false);
     }
 }

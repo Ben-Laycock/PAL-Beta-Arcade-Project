@@ -15,6 +15,10 @@ public class GameOverMenu : MonoBehaviour
 
     [SerializeField] private GameObject mPercentageText;
 
+    [SerializeField] private GameObject mPlayer;
+
+    private StartBackgroundMusic mPlayerBackgroundMusic;
+
     private Text mCoinCollectableQuantityText;
     private Text mLlamaCageCollectableQuantityText;
 
@@ -32,6 +36,8 @@ public class GameOverMenu : MonoBehaviour
         mLlamaCageCollectableQuantityText = mLlamaCageCollectableQuantity.GetComponent<Text>();
 
         mPercentageTextText = mPercentageText.GetComponent<Text>();
+
+        mPlayerBackgroundMusic = mPlayer.GetComponent<StartBackgroundMusic>();
     }
 
     public void ToggleGameOverOn()
@@ -46,19 +52,21 @@ public class GameOverMenu : MonoBehaviour
         mLlamaCageCollectableQuantityText.text = mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetCurrentQuantity().ToString() + "/" + mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetMaxQuantity().ToString();
 
 
-        int Percentage = (mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetCurrentQuantity() / mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetMaxQuantity()) * 100;
+        int Percentage = (int)(((float)mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetCurrentQuantity() / (float)mCollectableUIManagerScript.GetCollectableByName("CagedLlama").GetMaxQuantity()) * 100.0f);
 
         mPercentageTextText.text = "LEVEL " + Percentage.ToString() + "% COMPLETE!";
     }
 
     public void OnPlayAgainButtonPressed()
     {
+        mPlayerBackgroundMusic.StopMusic();
         AudioSystem.Instance.PlaySound("SliderClick", 1f);
         SceneManager.LoadScene("DanBlockout", LoadSceneMode.Single);
     }
 
     public void OnReturnToMainMenuButtonPressed()
     {
+        mPlayerBackgroundMusic.StopMusic();
         AudioSystem.Instance.PlaySound("SliderClick", 1f);
         SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
