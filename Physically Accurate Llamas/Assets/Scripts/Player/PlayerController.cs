@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour
         eIdle,
         eWalking,
         eFalling,
-        eGliding
+        eGliding,
+        eCharging
     }
 
 

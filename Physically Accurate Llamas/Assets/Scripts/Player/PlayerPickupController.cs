@@ -91,10 +91,10 @@ public class PlayerPickupController : MonoBehaviour
                     llamaRb.AddForce((llamaObj.transform.forward + llamaObj.transform.up) * 3, UnityEngine.ForceMode.Impulse);
                     llamaScript.hasSpawned = true;
 
-                    collectable.IncreaseCollectableQuantity();
-
                     rotIncrement += rotIncrementPerLlama;
                 }
+
+                collectable.IncreaseCollectableQuantity();
             }
         }
     }
